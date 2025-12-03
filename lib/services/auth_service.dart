@@ -1,4 +1,4 @@
-import 'package:buskei/models/user.dart';
+import 'package:buskei/models/user_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
