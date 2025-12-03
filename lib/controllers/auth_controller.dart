@@ -1,9 +1,9 @@
-import 'package:buskei/services/login_service.dart';
+import 'package:buskei/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginController extends ChangeNotifier{
-  final loginService = LoginService();
+class AuthController extends ChangeNotifier{
+  final authService = AuthService();
   bool loading = false;
   String? token;
 
@@ -11,7 +11,7 @@ class LoginController extends ChangeNotifier{
     loading = true;
     notifyListeners();
 
-    final result = await loginService.login(email, senha);
+    final result = await authService.login(email, senha);
 
     loading = false;
     notifyListeners();

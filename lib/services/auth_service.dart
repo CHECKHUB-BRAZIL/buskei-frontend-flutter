@@ -2,7 +2,7 @@ import 'package:buskei/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class LoginService {
+class AuthService {
   final String baseUrl = "";
 
   Future<UserLoginResponse?> login(String email, String senha) async{
