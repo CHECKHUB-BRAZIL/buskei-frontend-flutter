@@ -1,4 +1,5 @@
 import 'package:buskei/services/auth_service.dart';
+import 'package:buskei/models/user_register.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,5 +27,20 @@ class AuthController extends ChangeNotifier{
     await prefs.setString("token", token!);
 
     return true;
+  }
+
+  Future<bool> register(String nome, String email, String senha) async {
+    loading = true;
+
+    final data = UserRegister(
+      nome: nome,
+      email: email,
+      senha: senha,
+    );
+
+    final result = await authService.register(data);
+
+    loading = false;
+    return result;
   }
 }
