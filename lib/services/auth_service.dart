@@ -1,9 +1,10 @@
 import 'package:buskei/models/user_login.dart';
+import 'package:buskei/models/user_register.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthService {
-  final String baseUrl = "";
+  static const baseUrl = "";
 
   Future<UserLoginResponse?> login(String email, String senha) async{
     final url = Uri.parse("$baseUrl/login");
@@ -20,4 +21,17 @@ class AuthService {
 
     return null;
   } 
+
+  Future<bool> register(UserRegister data) async {
+    final url = Uri.parse("$baseUrl/register");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(data.toJson()),
+    );
+
+    return response.statusCode == 201;
+  }
+
 }
