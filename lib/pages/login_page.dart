@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 28),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
 
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 28),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.pushNamed(context, '/register');
                             },
                             child: Text(
-                              "Registre-se",
+                              "Registrar-se",
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -192,6 +192,34 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 12),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Esqueceu seu senha? ",
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: Color(0xFF1B1E28),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/register');
+                            },
+                            child: Text(
+                              "Recuperar",
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0057FF),
+                              )
+                            ),
+                          )
+                        ],
+                      )
                     ],
                   ),
                 ),
