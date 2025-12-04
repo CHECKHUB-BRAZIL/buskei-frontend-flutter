@@ -47,6 +47,20 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(labelText: "Senha"),
               ),
               SizedBox(height: 20),
+
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: Text(
+                  "Criar uma conta",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
