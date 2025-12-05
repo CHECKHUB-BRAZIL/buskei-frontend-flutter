@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -140,12 +141,39 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+
                           GestureDetector(
-                            onTap: () {
-                            },
+                            onTap: () {},
                             child: Container(
                               width: 55,
                               height: 55,
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.15),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  )
+                                ],
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  "assets/icon/google.svg",
+                                  width: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              margin: EdgeInsets.symmetric(horizontal: 10),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xFF1877F2),
@@ -158,7 +186,33 @@ class _LoginPageState extends State<LoginPage> {
                                 ],
                               ),
                               child: Center(
-                                child: Icon(Icons.facebook, size: 28, color: Colors.white),
+                                child: Icon(Icons.facebook, size: 40, color: Colors.white),
+                              ),
+                            ),
+                          ),
+
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 55,
+                              height: 55,
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xFF0A66C2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.15),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  )
+                                ],
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  "assets/icon/linkedin.png",
+                                  width: 48,
+                                ),
                               ),
                             ),
                           ),
