@@ -2,6 +2,7 @@ import 'package:buskei/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/custom_input.dart';
+import '../widgets/custom_button.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -83,7 +84,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 20),
 
-                      ElevatedButton(
+                      CustomButton(
+                        text: "Cadastrar",
                         onPressed: () async {
                           final success = await controller.register(
                             nomeController.text,
@@ -93,31 +95,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Usuário criado com sucesso!")),
+                              const SnackBar(content: Text("Usuário criado com sucesso!")),
                             );
-
                             Navigator.pushNamed(context, "/login");
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Erro ao criar usuário")),
+                              const SnackBar(content: Text("Erro ao criar usuário")),
                             );
                           }
                         },
-                        
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0057FF),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-
-                        child: Text("Cadastrar"),
                       ),
                     ],
                   ),
