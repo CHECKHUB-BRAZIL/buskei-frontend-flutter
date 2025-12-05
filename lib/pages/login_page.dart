@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/custom_input.dart';
+import '../widgets/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -65,61 +67,26 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // EMAIL
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF4F4F4),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: TextField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            hintText: "Email",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(color: Color(0xFF1B1E28)),
-                          ),
-                        ),
+
+                      CustomInput(
+                        hint: "Email",
+                        controller: emailController,
                       ),
 
                       const SizedBox(height: 18),
 
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF4F4F4),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: TextField(
-                          controller: senhaController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: "Senha",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(color: Color(0xFF1B1E28)),
-                          ),
-                        ),
+                      CustomInput(
+                        hint: "Senha",
+                        controller: senhaController,
+                        obscure: true,
                       ),
 
                       const SizedBox(height: 28),
 
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0057FF),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          "Logar",
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                      CustomButton(
+                        text: "Cadastrar",
+                        onPressed: () {
+                        },
                       ),
 
                       const SizedBox(height: 20),
