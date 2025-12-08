@@ -1,46 +1,62 @@
 import 'package:buskei/services/auth_service.dart';
 import 'package:buskei/models/user_register.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthController extends ChangeNotifier{
-  final authService = AuthService();
+class AuthController extends ChangeNotifier {
+  final AuthService authService = AuthService("https://sua-api.com");
+
   bool loading = false;
   String? token;
 
   Future<bool> login(String email, String senha) async {
-    loading = true;
-    notifyListeners();
+    try {
+      loading = true;
+      notifyListeners();
 
-    final result = await authService.login(email, senha);
+      final user = await authService.login(email, senha);
 
-    loading = false;
-    notifyListeners();
+      token = user.token;
 
-    if(result == null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token", token!);
+
+      loading = false;
+      notifyListeners();
+
+      return true;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+
+      debugPrint("Erro no login: $e");
       return false;
     }
-
-    token = result.token;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("token", token!);
-
-    return true;
   }
 
   Future<bool> register(String nome, String email, String senha) async {
-    loading = true;
+    try {
+      loading = true;
+      notifyListeners();
 
-    final data = UserRegister(
-      nome: nome,
-      email: email,
-      senha: senha,
-    );
+      final userData = UserRegister(
+        nome: nome,
+        email: email,
+        senha: senha,
+      );
 
-    final result = await authService.register(data);
+      await authService.register(userData);
 
-    loading = false;
-    return result;
+      loading = false;
+      notifyListeners();
+
+      return true;
+    } catch (e) {
+      loading = false;
+      notifyListeners();
+
+      debugPrint("Erro no cadastro: $e");
+      return false;
+    }
   }
 }
