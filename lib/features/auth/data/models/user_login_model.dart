@@ -1,17 +1,14 @@
-class UserRegister {
-  final String nome;
+class UserLoginModel {
   final String email;
   final String senha;
 
-  UserRegister({
-    required this.nome,
+  UserLoginModel({
     required this.email,
     required this.senha,
   });
 
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
-      "nome": nome,
       "email": email,
       "senha": senha,
     };

@@ -1,46 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'controllers/auth_controller.dart';
-import 'pages/login_page.dart';
-import 'pages/register_page.dart';
-import 'pages/splash_page.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+import 'package:buskei/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:buskei/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:buskei/features/auth/domain/usecases/login_usecase.dart';
+import 'package:buskei/features/auth/domain/usecases/register_usecase.dart';
+import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:buskei/features/auth/presentation/pages/login_page.dart';
+import 'package:buskei/features/auth/presentation/pages/register_page.dart';
+import 'package:buskei/features/auth/presentation/pages/splash_page.dart';
+
+
+void main() {
+  final datasource = AuthRemoteDataSource("http://localhost:8000");
+  final repository = AuthRepositoryImpl(datasource);
+  final loginUseCase = LoginUseCase(repository);
+  final registerUseCase = RegisterUseCase(repository);
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(
+          create: (_) => AuthController(
+            loginUseCase: loginUseCase,
+            registerUseCase: registerUseCase,
+          ),
+        ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Meu App',
-      debugShowCheckedModeBanner: false,
-
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true
-      ),
-
-      home: SplashPage(),
-
       routes: {
-        '/login': (_) => LoginPage(),
-        '/register': (_) => RegisterPage(),
+        "/": (context) => const SplashPage(),
+        "/login": (context) => const LoginPage(),
+        "/register": (context) => const RegisterPage(),
       },
+      initialRoute: "/",
     );
   }
 }

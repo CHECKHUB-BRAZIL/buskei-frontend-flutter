@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../widgets/custom_input.dart';
-import '../widgets/custom_button.dart';
+
+import '../controllers/auth_controller.dart';
+import '../../../../core/widgets/custom_input.dart';
+import '../../../../core/widgets/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
@@ -21,9 +27,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.read<AuthController>(); // ✅ não precisa rebuildar a tela toda
+
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -33,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -48,17 +55,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 30),
-                
+
                 Container(
                   width: 380,
-                  padding: EdgeInsets.all(28),
+                  padding: const EdgeInsets.all(28),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.15),
-                        offset: Offset(0, 6),
+                        offset: const Offset(0, 6),
                         blurRadius: 12,
                       )
                     ],
@@ -84,20 +91,44 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 28),
 
                       CustomButton(
-                        text: "Cadastrar",
-                        onPressed: () {
+                        text: "Entrar",
+                        onPressed: () async {
+                          final success = await controller.login(
+                            emailController.text,
+                            senhaController.text,
+                          );
+
+                          if (!mounted) return;
+
+                          if (success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Login realizado com sucesso!"),
+                              ),
+                            );
+                            // ✅ EXEMPLO DE REDIRECIONAMENTO
+                            // Navigator.pushReplacementNamed(context, '/home');
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Email ou senha inválidos"),
+                              ),
+                            );
+                          }
                         },
                       ),
 
                       const SizedBox(height: 20),
 
                       Row(
-                        children: [
+                        children: const [
                           Expanded(child: Divider(color: Colors.grey)),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text("ou",
-                                style: TextStyle(color: Colors.grey)),
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              "ou",
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ),
                           Expanded(child: Divider(color: Colors.grey)),
                         ],
@@ -114,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Container(
                               width: 55,
                               height: 55,
-                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
@@ -122,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.15),
                                     blurRadius: 6,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   )
                                 ],
                               ),
@@ -140,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Container(
                               width: 55,
                               height: 55,
-                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xFF1877F2),
@@ -148,12 +179,16 @@ class _LoginPageState extends State<LoginPage> {
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.15),
                                     blurRadius: 6,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   )
                                 ],
                               ),
-                              child: Center(
-                                child: Icon(Icons.facebook, size: 40, color: Colors.white),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.facebook,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -163,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Container(
                               width: 55,
                               height: 55,
-                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xFF0A66C2),
@@ -171,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.15),
                                     blurRadius: 6,
-                                    offset: Offset(0, 3),
+                                    offset: const Offset(0, 3),
                                   )
                                 ],
                               ),
@@ -195,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                             "Ainda não tem uma conta? ",
                             style: GoogleFonts.inter(
                               fontSize: 15,
-                              color: Color(0xFF1B1E28),
+                              color: const Color(0xFF1B1E28),
                             ),
                           ),
                           GestureDetector(
@@ -207,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF0057FF),
+                                color: const Color(0xFF0057FF),
                               ),
                             ),
                           ),
@@ -220,23 +255,23 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Esqueceu seu senha? ",
+                            "Esqueceu sua senha? ",
                             style: GoogleFonts.inter(
                               fontSize: 15,
-                              color: Color(0xFF1B1E28),
+                              color: const Color(0xFF1B1E28),
                             ),
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/register');
+                              // rota de recuperação depois
                             },
                             child: Text(
                               "Recuperar",
                               style: GoogleFonts.inter(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF0057FF),
-                              )
+                                color: const Color(0xFF0057FF),
+                              ),
                             ),
                           )
                         ],
