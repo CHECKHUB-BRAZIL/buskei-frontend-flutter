@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'package:buskei/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:buskei/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:buskei/features/auth/domain/usecases/login_params.dart';
-import 'package:buskei/features/auth/domain/usecases/register_params.dart';
 import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:buskei/features/auth/domain/usecases/login_usecase.dart';
+import 'package:buskei/features/auth/domain/usecases/register_usecase.dart';
 import 'package:buskei/features/auth/presentation/pages/login_page.dart';
 import 'package:buskei/features/auth/presentation/pages/register_page.dart';
 import 'package:buskei/features/auth/presentation/pages/splash_page.dart';

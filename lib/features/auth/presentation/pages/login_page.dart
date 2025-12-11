@@ -94,8 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                         text: "Entrar",
                         onPressed: () async {
                           final success = await controller.login(
-                            emailController.text,
-                            senhaController.text,
+                            email: emailController.text,
+                            senha: senhaController.text,
                           );
 
                           if (!mounted) return;

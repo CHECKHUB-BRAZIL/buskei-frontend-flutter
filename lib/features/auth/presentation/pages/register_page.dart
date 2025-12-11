@@ -92,10 +92,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         text: "Cadastrar",
                         onPressed: () async {
                           final success = await controller.register(
-                            emailController.text,
-                            senhaController.text,
+                            nome: nomeController.text,
+                            email: emailController.text,
+                            senha: senhaController.text,
                           );
-
                           if (!mounted) return;
 
                           if (success) {
