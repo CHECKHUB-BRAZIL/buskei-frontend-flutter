@@ -1,40 +1,73 @@
 import 'package:flutter/material.dart';
-import '../../domain/usecases/login_params.dart';
-import '../../domain/usecases/register_params.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../domain/usecases/login_usecase.dart';
+import '../../domain/usecases/register_usecase.dart';
 
 class AuthController extends ChangeNotifier {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
+
+  bool isLoading = false;
+  String? errorMessage;
 
   AuthController({
     required this.loginUseCase,
     required this.registerUseCase,
   });
 
-  bool isLoading = false;
-  UserEntity? user;
+  // ---------------------------
+  // Login
+  // ---------------------------
+  Future<bool> login({
+    required String email,
+    required String senha,
+  }) async {
+    return _handleAuthAction(() async {
+      await loginUseCase(
+        LoginParams(
+          email: email,
+          senha: senha,
+        ),
+      );
+    });
+  }
 
-  Future<bool> login(String email, String senha) async {
+  // ---------------------------
+  // Register
+  // ---------------------------
+  Future<bool> register({
+    required String nome,
+    required String email,
+    required String senha,
+  }) async {
+    return _handleAuthAction(() async {
+      await registerUseCase(
+        RegisterParams(
+          nome: nome,
+          email: email,
+          senha: senha,
+        ),
+      );
+    });
+  }
+
+  // ---------------------------
+  // Private generic handler
+  // ---------------------------
+  Future<bool> _handleAuthAction(Future<void> Function() action) async {
     try {
+      errorMessage = null;
       isLoading = true;
       notifyListeners();
 
-      user = await loginUseCase(email, senha);
+      await action();
 
       isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> register(String email, String senha) async {
-    try {
-      await registerUseCase(email, senha);
-      return true;
-    } catch (e) {
+      errorMessage = e.toString();
+      isLoading = false;
+      notifyListeners();
       return false;
     }
   }
