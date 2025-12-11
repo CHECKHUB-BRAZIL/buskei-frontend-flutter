@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../models/user_login_requestmodel.dart';
-import '../models/user_login_responsemodel.dart';
-import '../models/user_register_requestmodel.dart';
-import '../models/user_register_responsemodel.dart';
+import '../models/login/user_login_requestmodel.dart';
+import '../models/login/user_login_responsemodel.dart';
+import '../models/register/user_register_requestmodel.dart';
+import '../models/register/user_register_responsemodel.dart';
 
 /// ------------------------------------------------------------
 /// Interface da fonte de dados remota de autenticação.

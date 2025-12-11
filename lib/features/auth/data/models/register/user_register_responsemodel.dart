@@ -1,4 +1,4 @@
-import '../../domain/entities/user_entity.dart';
+import '../../../domain/entities/user_entity.dart';
 
 /// Modelo responsável por representar a **resposta do backend**
 /// durante o processo de registro de um novo usuário.
