@@ -1,12 +1,47 @@
-import '../repositories/auth_repository.dart';
-import '../entities/user_entity.dart';
+import 'package:buskei/features/auth/domain/entities/user_entity.dart';
+import 'package:buskei/features/auth/domain/repositories/auth_repository.dart';
 
-class LoginUseCase {
+import 'usecase.dart';
+import 'login_params.dart';
+
+/// Caso de uso responsável por autenticar um usuário.
+/// 
+/// Esse caso de uso recebe as credenciais por meio de [LoginParams]
+/// e delega ao repositório a tarefa de validar o usuário.
+/// 
+/// A lógica de autenticação (como validação, erros, filtros, etc.)
+/// deve acontecer aqui quando necessário, mantendo a camada de domínio
+/// isolada de detalhes de infraestrutura.
+/// 
+/// Retorna um [UserEntity] em caso de sucesso.
+/// Pode lançar exceções específicas da aplicação caso o login falhe.
+
+class LoginUseCase implements UseCase<UserEntity, LoginParams> {
   final AuthRepository repository;
 
   LoginUseCase(this.repository);
 
-  Future<UserEntity> call(String email, String senha) {
-    return repository.login(email, senha);
+  @override
+  Future<UserEntity> call(LoginParams params) async {
+    // Validações de domínio
+    if (params.email.isEmpty || !params.email.contains('@')) {
+      throw Exception("Email inválido");
+    }
+    if (params.senha.isEmpty) {
+      throw Exception("Senha não pode estar vazia");
+    }
+
+    // Aciona o repositório
+    final user = await repository.login(
+      email: params.email,
+      senha: params.senha,
+    );
+
+    // Regras adicionais
+    if (!user.canLogin()) {
+      throw Exception("Usuário desativado");
+    }
+
+    return user;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
+import '../../domain/usecases/login_params.dart';
+import '../../domain/usecases/register_params.dart';
 import '../../domain/entities/user_entity.dart';
 
 class AuthController extends ChangeNotifier {
