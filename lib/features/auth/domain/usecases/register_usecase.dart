@@ -1,73 +1,79 @@
-import 'package:buskei/features/auth/domain/entities/user_entity.dart';
-import 'package:buskei/features/auth/domain/repositories/auth_repository.dart';
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../../../../core/errors/failures.dart';
+import '../entities/user_entity.dart';
+import '../repositories/auth_repository.dart';
 import 'usecase.dart';
 
-/// Parâmetros necessários para executar o caso de uso de registro de usuário.
-/// 
-/// Essa classe concentra todos os dados que a operação de cadastro precisa,
-/// garantindo uma tipagem forte e facilitando manutenção e testes.
-/// 
-/// [nome] Nome completo do usuário.
-/// [email] E-mail que será utilizado para autenticação.
-/// [senha] Senha de acesso criada pelo usuário.
-class RegisterParams {
-  final String nome;
-  final String email;
-  final String senha;
-
-  RegisterParams({
-    required this.nome,
-    required this.email,
-    required this.senha,
-  });
-}
-
-/// Caso de uso responsável por registrar um novo usuário.
-/// 
-/// Recebe os dados de cadastro através de [RegisterParams]
-/// e solicita ao repositório que crie o usuário no backend.
-/// 
-/// Aqui é o ponto ideal para validar regras de negócio, como:
-/// - formato do e-mail
-/// - tamanho mínimo da senha
-/// - unicidade do nome/username (se aplicável)
-/// 
-/// Retorna um [UserEntity] ao finalizar o registro.
-/// Em caso de erro, deve lançar exceções específicas tratadas
-/// nas camadas superiores (apresentação ou infraestrutura).
+/// Use Case responsável por registrar um novo usuário.
+///
+/// Este caso de uso encapsula a lógica de registro,
+/// validando dados e criando uma nova conta no sistema.
+///
+/// Retorna:
+/// - [Right(UserEntity)]: Registro bem-sucedido
+/// - [Left(Failure)]: Falha no registro
 class RegisterUseCase implements UseCase<UserEntity, RegisterParams> {
   final AuthRepository repository;
 
   RegisterUseCase(this.repository);
 
   @override
-  Future<UserEntity> call(RegisterParams params) async {
-    final length = params.email.length;
-    // Validações de domínio antes de chamar API
+  Future<Either<Failure, UserEntity>> call(RegisterParams params) async {
+    // Validações básicas
     if (params.nome.isEmpty) {
-      throw Exception("Nome não pode ser vazio.");
+      return const Left(ValidationFailure('Nome não pode ser vazio'));
     }
 
-    if (params.email.isEmpty || !params.email.contains('@')) {
-      throw Exception("Email inválido.");
+    if (params.nome.length < 2) {
+      return const Left(ValidationFailure('Nome deve ter no mínimo 2 caracteres'));
     }
 
-    if (length < 7 || length > 9) {
-      throw Exception("A senha deve ter entre 7 e 9 caracteres.");
+    if (params.email.isEmpty) {
+      return const Left(ValidationFailure('Email não pode ser vazio'));
     }
 
-    // Chama o repositório (que chama a API)
-    final user = await repository.register(
+    if (!params.email.contains('@')) {
+      return const Left(ValidationFailure('Email inválido'));
+    }
+
+    if (params.senha.isEmpty) {
+      return const Left(ValidationFailure('Senha não pode ser vazia'));
+    }
+
+    if (params.senha.length < 6) {
+      return const Left(ValidationFailure('Senha deve ter no mínimo 6 caracteres'));
+    }
+
+    // Validação adicional: senha e confirmação devem ser iguais
+    if (params.confirmacaoSenha != null && 
+        params.senha != params.confirmacaoSenha) {
+      return const Left(ValidationFailure('Senhas não conferem'));
+    }
+
+    // Delega ao repository
+    return await repository.register(
       nome: params.nome,
       email: params.email,
       senha: params.senha,
     );
-
-    // Regras de domínio pós-registro
-    if (!user.canLogin()) {
-      throw Exception("Usuário criado mas desativado.");
-    }
-
-    return user;
   }
+}
+
+/// Parâmetros necessários para o RegisterUseCase.
+class RegisterParams extends Equatable {
+  final String nome;
+  final String email;
+  final String senha;
+  final String? confirmacaoSenha;
+
+  const RegisterParams({
+    required this.nome,
+    required this.email,
+    required this.senha,
+    this.confirmacaoSenha,
+  });
+
+  @override
+  List<Object?> get props => [nome, email, senha, confirmacaoSenha];
 }

@@ -1,61 +1,60 @@
-import 'package:buskei/features/auth/domain/entities/user_entity.dart';
-import 'package:buskei/features/auth/domain/repositories/auth_repository.dart';
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../../../../core/errors/failures.dart';
+import '../entities/user_entity.dart';
+import '../repositories/auth_repository.dart';
 import 'usecase.dart';
 
-/// Parâmetros necessários para executar o caso de uso de login.
-/// 
-/// Representa os dados usados para autenticar um usuário no sistema.
-/// 
-/// [email] E-mail cadastrado.
-/// [senha] Senha correspondente ao e-mail informado.
-class LoginParams {
-  final String email;
-  final String senha;
-
-  LoginParams({
-    required this.email,
-    required this.senha,
-  });
-}
-
-/// Caso de uso responsável por autenticar um usuário.
-/// 
-/// Esse caso de uso recebe as credenciais por meio de [LoginParams]
-/// e delega ao repositório a tarefa de validar o usuário.
-/// 
-/// A lógica de autenticação (como validação, erros, filtros, etc.)
-/// deve acontecer aqui quando necessário, mantendo a camada de domínio
-/// isolada de detalhes de infraestrutura.
-/// 
-/// Retorna um [UserEntity] em caso de sucesso.
-/// Pode lançar exceções específicas da aplicação caso o login falhe.
-
+/// Use Case responsável por realizar o login de um usuário.
+///
+/// Este caso de uso encapsula a lógica de autenticação,
+/// validando credenciais e retornando dados do usuário autenticado.
+///
+/// Retorna:
+/// - [Right(UserEntity)]: Login bem-sucedido
+/// - [Left(Failure)]: Falha na autenticação
 class LoginUseCase implements UseCase<UserEntity, LoginParams> {
   final AuthRepository repository;
 
   LoginUseCase(this.repository);
 
   @override
-  Future<UserEntity> call(LoginParams params) async {
-    // Validações de domínio
-    if (params.email.isEmpty || !params.email.contains('@')) {
-      throw Exception("Email inválido");
-    }
-    if (params.senha.isEmpty) {
-      throw Exception("Senha não pode estar vazia");
+  Future<Either<Failure, UserEntity>> call(LoginParams params) async {
+    // Validações básicas podem ser feitas aqui
+    if (params.email.isEmpty) {
+      return const Left(ValidationFailure('Email não pode ser vazio'));
     }
 
-    // Aciona o repositório
-    final user = await repository.login(
+    if (!params.email.contains('@')) {
+      return const Left(ValidationFailure('Email inválido'));
+    }
+
+    if (params.senha.isEmpty) {
+      return const Left(ValidationFailure('Senha não pode ser vazia'));
+    }
+
+    if (params.senha.length < 6) {
+      return const Left(ValidationFailure('Senha deve ter no mínimo 6 caracteres'));
+    }
+
+    // Delega ao repository
+    return await repository.login(
       email: params.email,
       senha: params.senha,
     );
-
-    // Regras adicionais
-    if (!user.canLogin()) {
-      throw Exception("Usuário desativado");
-    }
-
-    return user;
   }
+}
+
+/// Parâmetros necessários para o LoginUseCase.
+class LoginParams extends Equatable {
+  final String email;
+  final String senha;
+
+  const LoginParams({
+    required this.email,
+    required this.senha,
+  });
+
+  @override
+  List<Object> get props => [email, senha];
 }
