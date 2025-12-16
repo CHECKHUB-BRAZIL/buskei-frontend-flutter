@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 /// Entidade principal que representa um usuário dentro da camada de domínio.
 ///
 /// A [UserEntity] encapsula apenas regras de negócio e validações essenciais
@@ -5,14 +7,14 @@
 ///
 /// Características:
 /// - Imutável (todas as propriedades são finais).
-/// - Possui validações internas para nome e email.
-/// - Possui métodos que expressam regras de negócio, como [deactivate] e [canLogin].
+/// - Usa [Equatable] para comparações eficientes.
+/// - Possui métodos que expressam regras de negócio.
 ///
 /// Esta entidade é usada pelas camadas:
 /// - Domain (UseCases)
 /// - Data (Models convertem para/desde esta entidade)
 /// - Presentation (Controllers consomem esta entidade)
-class UserEntity {
+class UserEntity extends Equatable {
   /// Identificador único do usuário.
   final String id;
 
@@ -25,63 +27,74 @@ class UserEntity {
   /// Indica se o usuário está ativo no sistema.
   final bool isActive;
 
-  /// Construtor da entidade.
-  ///
-  /// Executa validações essenciais:
-  /// - Nome não pode ser vazio.
-  /// - Email não pode ser vazio.
-  /// - Email precisa conter '@'.
-  ///
-  /// Qualquer violação lança um [ArgumentError].
-  UserEntity({
+  /// Token de autenticação (opcional, pode estar em outra entidade)
+  final String? token;
+
+  /// Data de criação da conta
+  final DateTime? createdAt;
+
+  const UserEntity({
     required this.id,
     required this.nome,
     required this.email,
     this.isActive = true,
-  }) {
-    if (nome.isEmpty) {
-      throw ArgumentError('Nome não pode ser vazio');
-    }
-    if (email.isEmpty) {
-      throw ArgumentError('Email não pode ser vazio');
-    }
-    if (!email.contains('@')) {
-      throw ArgumentError('Email inválido');
-    }
-  }
+    this.token,
+    this.createdAt,
+  });
 
   /// Retorna uma nova instância do usuário, porém desativado.
   ///
   /// Como a entidade é imutável, não é possível alterar `isActive`
   /// diretamente — então retornamos uma nova entidade com a propriedade alterada.
   UserEntity deactivate() {
-    return UserEntity(
-      id: id,
-      email: email,
-      nome: nome,
-      isActive: false,
-    );
+    return copyWith(isActive: false);
+  }
+
+  /// Ativa o usuário novamente
+  UserEntity activate() {
+    return copyWith(isActive: true);
   }
 
   /// Regra de negócio simples:
   /// retorna `true` se o usuário estiver ativo e puder fazer login.
-  bool canLogin() {
-    return isActive;
+  bool canLogin() => isActive;
+
+  /// Verifica se o usuário tem um token válido
+  bool get isAuthenticated => token != null && token!.isNotEmpty;
+
+  /// Verifica se o nome do usuário é válido
+  bool get hasValidName => nome.isNotEmpty && nome.length >= 2;
+
+  /// Verifica se o email tem formato básico válido
+  bool get hasValidEmail => email.contains('@') && email.length >= 5;
+
+  /// Cria uma cópia da entidade com alterações específicas
+  UserEntity copyWith({
+    String? id,
+    String? nome,
+    String? email,
+    bool? isActive,
+    String? token,
+    DateTime? createdAt,
+  }) {
+    return UserEntity(
+      id: id ?? this.id,
+      nome: nome ?? this.nome,
+      email: email ?? this.email,
+      isActive: isActive ?? this.isActive,
+      token: token ?? this.token,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 
-  /// Sobrescrita de igualdade para comparar usuários pelo seu `id`.
-  ///
-  /// Isso garante que duas entidades com o mesmo `id` sejam tratadas
-  /// como o mesmo usuário dentro do domínio.
-  @override
-  bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is UserEntity &&
-        runtimeType == other.runtimeType &&
-        id == other.id;
+  /// Remove dados sensíveis (usado para logs, por exemplo)
+  UserEntity sanitize() {
+    return copyWith(token: null);
+  }
 
-  /// HashCode consistente com o operador `==`,
-  /// garantindo comparações corretas em coleções (maps, sets, etc).
   @override
-  int get hashCode => id.hashCode;
+  List<Object?> get props => [id, nome, email, isActive, token, createdAt];
+
+  @override
+  bool get stringify => true;
 }
