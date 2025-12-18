@@ -124,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       children: [
                         _buildLogo(),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 26),
                         _buildRegisterForm(),
                       ],
                     ),
@@ -145,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Text(
           "Busquei",
           style: GoogleFonts.inter(
-            fontSize: 48,
+            fontSize: 40,
             fontWeight: FontWeight.bold,
             color: Colors.white,
             letterSpacing: -1,
@@ -184,12 +184,21 @@ class _RegisterPageState extends State<RegisterPage> {
             _buildPasswordField(),
             const SizedBox(height: 16),
             _buildConfirmPasswordField(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
             _buildTermsCheckbox(),
             const SizedBox(height: 24),
-            CustomButton(
-              text: "Criar conta",
-              onPressed: _handleRegister,
+            GetX<AuthController>(
+              builder: (controller) {
+                return CustomButton(
+                  text: controller.isLoading.value
+                      ? "Criando conta..."
+                      : "Criar conta",
+                  isLoading: controller.isLoading.value,
+                  onPressed:
+                      controller.isLoading.value ? null : _handleRegister,
+                  icon: Icons.person_add_alt_1,
+                );
+              },
             ),
             const SizedBox(height: 24),
             _buildLoginLink(),
@@ -308,6 +317,11 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         TextButton(
           onPressed: () => Get.back(),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(0, 0),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           child: Text(
             "Entrar",
             style: GoogleFonts.inter(
