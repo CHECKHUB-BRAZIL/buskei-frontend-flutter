@@ -1,4 +1,4 @@
-import '../../../domain/entities/user_entity.dart';
+import '../user_model.dart';
 
 /// Modelo responsável por representar a **resposta do backend**
 /// durante o processo de registro de um novo usuário.
@@ -10,61 +10,71 @@ import '../../../domain/entities/user_entity.dart';
 /// Ele NÃO deve conter regras de negócio.
 /// Seu único papel é:
 /// - Receber JSON da API (Response)
-/// - Converter esse JSON em uma entidade do domínio (UserEntity)
-class UserRegisterResponseModel {
-  /// Identificador único gerado pelo backend para o novo usuário.
-  final String id;
+/// - Converter esse JSON em um [UserModel]
+class RegisterResponseModel {
+  /// Dados do usuário recém-criado.
+  final UserModel user;
 
-  /// Nome do usuário retornado na resposta do backend.
-  final String nome;
+  /// Token de acesso JWT para autenticação automática após registro.
+  final String accessToken;
 
-  /// Email do usuário cadastrado.
-  final String email;
+  /// Token de refresh para renovar o accessToken (opcional).
+  final String? refreshToken;
 
-  /// Token JWT ou outro tipo de token retornado pelo backend
-  /// após o registro.
-  ///
-  /// Este valor **não deve ser enviado para o domínio**.
-  /// Ele é usado apenas na camada de infraestrutura
-  /// para autenticação das próximas requisições.
-  final String token;
+  /// Tipo do token (geralmente "Bearer").
+  final String tokenType;
 
-  UserRegisterResponseModel({
-    required this.id,
-    required this.nome,
-    required this.email,
-    required this.token,
+  /// Mensagem de sucesso do backend (opcional).
+  final String? message;
+
+  RegisterResponseModel({
+    required this.user,
+    required this.accessToken,
+    this.refreshToken,
+    this.tokenType = 'Bearer',
+    this.message,
   });
 
-  /// Constrói um [UserRegisterResponseModel] a partir de um JSON.
+  /// Constrói um [RegisterResponseModel] a partir de um JSON.
   ///
   /// Exemplo esperado:
   /// ```json
   /// {
-  ///   "id": "123",
-  ///   "nome": "Sophia",
-  ///   "email": "sophia@gmail.com",
-  ///   "token": "jwt123abc"
+  ///   "user": {
+  ///     "id": "123",
+  ///     "nome": "João Silva",
+  ///     "email": "joao@example.com",
+  ///     "is_active": true,
+  ///     "created_at": "2024-01-15T10:30:00Z"
+  ///   },
+  ///   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  ///   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  ///   "token_type": "Bearer",
+  ///   "message": "Usuário criado com sucesso"
   /// }
   /// ```
-  factory UserRegisterResponseModel.fromJson(Map<String, dynamic> json) {
-    return UserRegisterResponseModel(
-      id: json["id"] as String,
-      nome: json["nome"] as String,
-      email: json["email"] as String,
-      token: json["token"] as String,
+  factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
+    // Adiciona o token ao user model
+    final userData = Map<String, dynamic>.from(json['user'] as Map);
+    userData['token'] = json['access_token'];
+
+    return RegisterResponseModel(
+      user: UserModel.fromJson(userData),
+      accessToken: json['access_token'] as String,
+      refreshToken: json['refresh_token'] as String?,
+      tokenType: json['token_type'] as String? ?? 'Bearer',
+      message: json['message'] as String?,
     );
   }
 
-  /// Converte o response model em uma entidade de domínio [UserEntity].
-  ///
-  /// Apenas os dados essenciais à regra de negócio são repassados.
-  /// O token é descartado, pois faz parte da camada Data/Infra.
-  UserEntity toEntity() {
-    return UserEntity(
-      id: id,
-      nome: nome,
-      email: email,
-    );
+  /// Converte para JSON (útil para cache/log)
+  Map<String, dynamic> toJson() {
+    return {
+      'user': user.toJson(),
+      'access_token': accessToken,
+      if (refreshToken != null) 'refresh_token': refreshToken,
+      'token_type': tokenType,
+      if (message != null) 'message': message,
+    };
   }
 }

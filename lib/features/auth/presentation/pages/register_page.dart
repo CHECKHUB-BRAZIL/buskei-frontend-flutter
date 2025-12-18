@@ -124,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       children: [
                         _buildLogo(),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 20),
                         _buildRegisterForm(),
                       ],
                     ),
@@ -149,14 +149,6 @@ class _RegisterPageState extends State<RegisterPage> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
             letterSpacing: -1,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "Crie sua conta",
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.9),
           ),
         ),
       ],

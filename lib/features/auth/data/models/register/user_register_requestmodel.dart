@@ -9,7 +9,7 @@
 /// Seu papel é:
 /// - Agrupar os dados necessários para o registro
 /// - Convertê-los para JSON
-class UserRegisterRequestModel {
+class RegisterRequestModel {
   /// Nome do usuário a ser cadastrado.
   final String nome;
 
@@ -19,7 +19,7 @@ class UserRegisterRequestModel {
   /// Senha usada para criação da conta.
   final String senha;
 
-  UserRegisterRequestModel({
+  RegisterRequestModel({
     required this.nome,
     required this.email,
     required this.senha,
@@ -30,16 +30,16 @@ class UserRegisterRequestModel {
   /// Exemplo gerado:
   /// ```json
   /// {
-  ///   "nome": "Sophia",
-  ///   "email": "sophia@gmail.com",
-  ///   "senha": "12345678"
+  ///   "nome": "João Silva",
+  ///   "email": "joao@example.com",
+  ///   "senha": "senha123"
   /// }
   /// ```
   Map<String, dynamic> toJson() {
     return {
-      "nome": nome,
-      "email": email,
-      "senha": senha,
+      'nome': nome,
+      'email': email,
+      'senha': senha,
     };
   }
 }

@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildLogo(),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 20),
                         _buildLoginForm(),
                       ],
                     ),
@@ -127,19 +127,10 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           "Busquei",
           style: GoogleFonts.inter(
-            fontSize: 48,
+            fontSize: 40,
             fontWeight: FontWeight.bold,
             color: Colors.white,
             letterSpacing: -1,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "Bem-vindo de volta!",
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.9),
-            fontWeight: FontWeight.w400,
           ),
         ),
       ],

@@ -1,30 +1,33 @@
-/// Modelo responsável por representar os dados enviados
-/// ao backend ao realizar um login.
+/// Modelo responsável por representar a **requisição de login**
+/// enviada ao backend.
 ///
-/// Este model pertence à camada *Data* e converte
-/// dados da apresentação (email + senha) em JSON.
+/// Este modelo vive apenas na camada **Data**, pois descreve a estrutura
+/// exata que será enviada em formato JSON.
 ///
-/// Ele é usado exclusivamente para requisições (request),
-/// nunca para respostas.
-class UserLoginRequestModel {
-  /// Email informado pelo usuário na tela de login.
+/// Ele NÃO deve conter lógica de negócio.
+///
+/// Seu papel é:
+/// - Agrupar os dados necessários para o login
+/// - Convertê-los para JSON
+class LoginRequestModel {
+  /// Email do usuário.
   final String email;
 
-  /// Senha informada pelo usuário.
+  /// Senha do usuário.
   final String senha;
 
-  UserLoginRequestModel({
+  LoginRequestModel({
     required this.email,
     required this.senha,
   });
 
-  /// Converte o model para JSON para envio ao backend.
+  /// Converte o modelo em JSON para enviar ao backend.
   ///
-  /// Exemplo do JSON produzido:
+  /// Exemplo gerado:
   /// ```json
   /// {
-  ///   "email": "teste@gmail.com",
-  ///   "senha": "123456"
+  ///   "email": "joao@example.com",
+  ///   "senha": "senha123"
   /// }
   /// ```
   Map<String, dynamic> toJson() {
