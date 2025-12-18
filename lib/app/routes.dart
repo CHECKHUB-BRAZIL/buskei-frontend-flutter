@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
-// import '../features/home/presentation/pages/home_page.dart'; // Quando criar
+import '../features/home/presentation/pages/home_page.dart';
+import '../features/home/presentation/bindings/home_binding.dart';
 
 /// Centraliza a definição de todas as rotas da aplicação.
 ///
@@ -29,6 +30,8 @@ class AppRoutes {
 
   /// Rota da tela de cadastro
   static const String register = '/register';
+
+  static const String home = '/home';
 
   // ---------------------------------------------------------------------------
   // Lista de rotas registradas no GetX
@@ -56,6 +59,11 @@ class AppRoutes {
       name: register,
       page: () => const RegisterPage(),
       transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: home,
+      page: () => const HomePage(),
+      binding: HomeBinding(),
     ),
   ];
 }

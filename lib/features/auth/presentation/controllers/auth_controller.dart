@@ -179,4 +179,11 @@ class AuthController extends GetxController {
 
     isLoading.value = false;
   }
+
+  
+  void enterAsGuest() {
+    currentUser.value = null;
+    isAuthenticated.value = false;
+  }
+
 }
