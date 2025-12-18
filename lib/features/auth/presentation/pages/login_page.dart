@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildLogo(),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 26),
                         _buildLoginForm(),
                       ],
                     ),
@@ -140,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
   /// Constrói o card principal do formulário de login
   Widget _buildLoginForm() {
     return Container(
-      constraints: const BoxConstraints(maxWidth: 400),
+      constraints: const BoxConstraints(maxWidth: 600),
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -159,13 +159,13 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildFormTitle(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             _buildEmailField(),
             const SizedBox(height: 16),
             _buildPasswordField(),
-            const SizedBox(height: 12),
+            const SizedBox(height: 4),
             _buildForgotPasswordButton(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             _buildLoginButton(),
             const SizedBox(height: 24),
             _buildDivider(),
@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
             _buildSocialButtons(),
             const SizedBox(height: 16),
             _buildContinueAsGuest(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 4),
             _buildRegisterLink(),
           ],
         ),
