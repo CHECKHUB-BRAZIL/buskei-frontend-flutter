@@ -3,28 +3,21 @@ import '../user_model.dart';
 /// Modelo responsável por representar a **resposta do backend**
 /// durante o processo de registro de um novo usuário.
 ///
-/// Este modelo pertence exclusivamente à camada **Data**, onde lidamos
-/// com formatos JSON, detalhes da API e estruturas específicas
-/// de comunicação com o backend.
-///
-/// Ele NÃO deve conter regras de negócio.
-/// Seu único papel é:
-/// - Receber JSON da API (Response)
-/// - Converter esse JSON em um [UserModel]
+/// Pertence à camada **Data** e lida exclusivamente com JSON/API.
 class RegisterResponseModel {
   /// Dados do usuário recém-criado.
   final UserModel user;
 
-  /// Token de acesso JWT para autenticação automática após registro.
+  /// Token de acesso JWT.
   final String accessToken;
 
-  /// Token de refresh para renovar o accessToken (opcional).
+  /// Token de refresh (opcional).
   final String? refreshToken;
 
-  /// Tipo do token (geralmente "Bearer").
+  /// Tipo do token (default: Bearer).
   final String tokenType;
 
-  /// Mensagem de sucesso do backend (opcional).
+  /// Mensagem opcional do backend.
   final String? message;
 
   RegisterResponseModel({
@@ -35,31 +28,10 @@ class RegisterResponseModel {
     this.message,
   });
 
-  /// Constrói um [RegisterResponseModel] a partir de um JSON.
-  ///
-  /// Exemplo esperado:
-  /// ```json
-  /// {
-  ///   "user": {
-  ///     "id": "123",
-  ///     "nome": "João Silva",
-  ///     "email": "joao@example.com",
-  ///     "is_active": true,
-  ///     "created_at": "2024-01-15T10:30:00Z"
-  ///   },
-  ///   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  ///   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  ///   "token_type": "Bearer",
-  ///   "message": "Usuário criado com sucesso"
-  /// }
-  /// ```
+  /// Constrói um [RegisterResponseModel] a partir do JSON real do backend.
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
-    // Adiciona o token ao user model
-    final userData = Map<String, dynamic>.from(json['user'] as Map);
-    userData['token'] = json['access_token'];
-
     return RegisterResponseModel(
-      user: UserModel.fromJson(userData),
+      user: UserModel.fromJson(json),
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String?,
       tokenType: json['token_type'] as String? ?? 'Bearer',
@@ -67,10 +39,10 @@ class RegisterResponseModel {
     );
   }
 
-  /// Converte para JSON (útil para cache/log)
+  /// Converte para JSON (cache / debug).
   Map<String, dynamic> toJson() {
     return {
-      'user': user.toJson(),
+      ...user.toJson(),
       'access_token': accessToken,
       if (refreshToken != null) 'refresh_token': refreshToken,
       'token_type': tokenType,

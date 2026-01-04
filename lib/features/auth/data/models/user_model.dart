@@ -15,7 +15,6 @@ class UserModel {
   final String nome;
   final String email;
   final bool isActive;
-  final String? token;
   final String? createdAt;
   final String? updatedAt;
 
@@ -24,7 +23,6 @@ class UserModel {
     required this.nome,
     required this.email,
     this.isActive = true,
-    this.token,
     this.createdAt,
     this.updatedAt,
   });
@@ -49,7 +47,6 @@ class UserModel {
       nome: json['nome'] as String,
       email: json['email'] as String,
       isActive: json['is_active'] as bool? ?? true,
-      token: json['token'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -64,7 +61,6 @@ class UserModel {
       'nome': nome,
       'email': email,
       'is_active': isActive,
-      if (token != null) 'token': token,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     };
@@ -80,7 +76,6 @@ class UserModel {
       nome: nome,
       email: email,
       isActive: isActive,
-      token: token,
       createdAt: createdAt != null ? DateTime.tryParse(createdAt!) : null,
     );
   }
@@ -94,7 +89,6 @@ class UserModel {
       nome: entity.nome,
       email: entity.email,
       isActive: entity.isActive,
-      token: entity.token,
       createdAt: entity.createdAt?.toIso8601String(),
     );
   }
@@ -114,7 +108,6 @@ class UserModel {
       nome: nome ?? this.nome,
       email: email ?? this.email,
       isActive: isActive ?? this.isActive,
-      token: token ?? this.token,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

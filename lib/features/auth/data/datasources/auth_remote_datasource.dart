@@ -1,3 +1,4 @@
+import 'package:buskei/core/network/api_client.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/config/api_config.dart';
@@ -95,14 +96,14 @@ abstract class AuthRemoteDataSource {
 /// - **Lança exceções para o repositório tratar**
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// Cliente HTTP configurado com interceptors, baseUrl, headers, etc.
-  final Dio dio;
+  final ApiClient apiClient;
 
-  AuthRemoteDataSourceImpl({required this.dio});
+  AuthRemoteDataSourceImpl({required this.apiClient});
 
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {
     try {
-      final response = await dio.post(
+      final response = await apiClient.dio.post(
         ApiConfig.loginEndpoint,
         data: request.toJson(),
       );
@@ -123,7 +124,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<RegisterResponseModel> register(RegisterRequestModel request) async {
     try {
-      final response = await dio.post(
+      final response = await apiClient.dio.post(
         ApiConfig.registerEndpoint,
         data: request.toJson(),
       );
@@ -144,7 +145,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get(ApiConfig.currentUserEndpoint);
+      final response = await apiClient.dio.get(ApiConfig.currentUserEndpoint);
 
       if (response.statusCode == 200) {
         return UserModel.fromJson(response.data);
@@ -162,7 +163,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> refreshToken(String refreshToken) async {
     try {
-      final response = await dio.post(
+      final response = await apiClient.dio.post(
         ApiConfig.refreshTokenEndpoint,
         data: {'refresh_token': refreshToken},
       );
@@ -183,7 +184,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      final response = await dio.post(ApiConfig.logoutEndpoint);
+      final response = await apiClient.dio.post(ApiConfig.logoutEndpoint);
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw ServerException(

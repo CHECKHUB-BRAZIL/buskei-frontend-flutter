@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import 'app/app.dart';
-import 'injection_container.dart' as di;
 
 void main() async {
   // Garante que os bindings do Flutter estão inicializados
@@ -14,7 +14,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Configura a UI do sistema (status bar, navigation bar)
+  // Configura a UI do sistema
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -23,9 +23,6 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-
-  // Inicializa dependências
-  await di.init();
 
   // Executa o app
   runApp(const MyApp());
