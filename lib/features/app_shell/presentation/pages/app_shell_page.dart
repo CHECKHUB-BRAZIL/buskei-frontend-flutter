@@ -47,7 +47,7 @@ class AppShellPage extends GetView<AppShellController> {
       case 1:
         return const SearchPage();
       case 2:
-        return ProfilePage(authController: authController);
+        return ProfilePage();
       default:
         return const SizedBox.shrink();
     }
