@@ -112,7 +112,7 @@ class AuthController extends GetxController {
       (user) {
         currentUser.value = user;
         isAuthenticated.value = true;
-        Get.offAllNamed('/home');
+        Get.offAllNamed('/app');
       },
     );
 
@@ -147,7 +147,7 @@ class AuthController extends GetxController {
       (user) {
         currentUser.value = user;
         isAuthenticated.value = true;
-        Get.offAllNamed('/home');
+        Get.offAllNamed('/app');
       },
     );
 

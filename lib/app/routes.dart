@@ -7,21 +7,21 @@ import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/bindings/auth_binding.dart';
 
-import '../features/home/presentation/pages/home_page.dart';
-import '../features/home/presentation/bindings/home_binding.dart';
+import '../features/app_shell/presentation/pages/app_shell_page.dart';
+import '../features/app_shell/presentation/bindings/app_shell_binding.dart';
 
 class AppRoutes {
   // ---------------------------------------------------------------------------
-  // Nomes das rotas
+  // Route names
   // ---------------------------------------------------------------------------
 
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
-  static const String home = '/home';
+  static const String appShell = '/app';
 
   // ---------------------------------------------------------------------------
-  // Rotas do GetX
+  // GetX routes
   // ---------------------------------------------------------------------------
 
   static final routes = [
@@ -47,14 +47,14 @@ class AppRoutes {
     ),
 
     GetPage(
-      name: home,
-      page: () => const HomePage(),
+      name: appShell,
+      page: () => const AppShellPage(),
       bindings: [
         AuthBinding(),
-        HomeBinding(),
+        AppShellBinding(),
       ],
-      transition: Transition.fadeIn,
       middlewares: [AuthMiddleware()],
+      transition: Transition.fadeIn,
     ),
   ];
 }

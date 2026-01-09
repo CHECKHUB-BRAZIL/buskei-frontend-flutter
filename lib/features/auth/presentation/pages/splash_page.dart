@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../controllers/auth_controller.dart';
-
 /// Tela de Splash da aplicação.
 ///
 /// Responsável por:
 /// - Exibir a identidade visual inicial do app
 /// - Executar animações de entrada (fade + scale)
-/// - Verificar o estado de autenticação do usuário
-/// - Redirecionar automaticamente para a tela correta
-///   (Home ou Login)
+/// - Exibir o app por um tempo mínimo
+/// - Redirecionar para o AppShell
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -77,31 +74,11 @@ class _SplashPageState extends State<SplashPage>
   /// Após a conclusão, redireciona o usuário
   /// para a rota correta.
   Future<void> _initialize() async {
-    await Future.wait([
-      Future.delayed(const Duration(milliseconds: 2000)),
-      _checkAuth(),
-    ]);
+    await Future.delayed(const Duration(milliseconds: 2000));
 
     if (!mounted) return;
 
-    final auth = Get.find<AuthController>();
-
-    /// Redireciona com base no estado de autenticação
-    Get.offAllNamed(
-      auth.isAuthenticated.value ? '/home' : '/login',
-    );
-  }
-
-  /// Verifica se existe um usuário autenticado.
-  ///
-  /// Em caso de erro, apenas registra no log,
-  /// evitando quebrar o fluxo da Splash Screen.
-  Future<void> _checkAuth() async {
-    try {
-      await Get.find<AuthController>().checkAuthStatus();
-    } catch (e) {
-      debugPrint('Auth check error: $e');
-    }
+    Get.offAllNamed('/app');
   }
 
   @override
