@@ -153,24 +153,22 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, void>> logout() async {
     try {
-      if (await _hasConnection()) {
+      final refreshToken = await localDataSource.getRefreshToken();
+
+      if (refreshToken != null && await _hasConnection()) {
         try {
-          await remoteDataSource.logout();
+          await remoteDataSource.logout(refreshToken);
         } catch (_) {
-          // Ignora falha remota para não bloquear logout local
+          // best effort: não bloqueia logout local
         }
       }
 
       await localDataSource.clearAuthData();
-
       return const Right(null);
-    } on CacheException catch (e) {
-      return Left(CacheFailure(e.message));
     } catch (e) {
       return Left(UnknownFailure('Erro ao fazer logout: $e'));
     }
   }
-
   /// Retorna o usuário atualmente autenticado.
   ///
   /// Estratégia:

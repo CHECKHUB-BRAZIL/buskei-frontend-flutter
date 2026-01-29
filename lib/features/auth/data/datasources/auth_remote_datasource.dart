@@ -1,4 +1,5 @@
 import 'package:buskei/core/network/api_client.dart';
+import 'package:buskei/features/auth/data/models/logout_request_model.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/config/api_config.dart';
@@ -80,7 +81,7 @@ abstract class AuthRemoteDataSource {
   /// Lança:
   /// - [NetworkException]
   /// - [ServerException]
-  Future<void> logout();
+  Future<void> logout(String refreshToken);
 }
 
 /// Implementação concreta de [AuthRemoteDataSource] utilizando **Dio**.
@@ -182,9 +183,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout(String refreshToken) async {
     try {
-      final response = await apiClient.dio.post(ApiConfig.logoutEndpoint);
+      final request = LogoutRequestModel(refreshToken: refreshToken);
+
+      final response = await apiClient.dio.post(
+        ApiConfig.logoutEndpoint,
+        data: request.toJson(),
+      );
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw ServerException(
