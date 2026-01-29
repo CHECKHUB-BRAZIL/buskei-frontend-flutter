@@ -1,3 +1,4 @@
+import 'package:buskei/app/auth_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,11 +30,10 @@ class MyApp extends StatelessWidget {
       // ---------------------------------------------------------------------
 
       initialRoute: AppRoutes.splash,
-      getPages: AppRoutes.routes,
 
-      // ❌ NÃO TEM initialBinding
-      // ❌ NÃO TEM injection_container
-      // ❌ NÃO TEM GetIt
+      initialBinding: AuthBinding(),
+
+      getPages: AppRoutes.routes,
 
       // ---------------------------------------------------------------------
       // Internacionalização

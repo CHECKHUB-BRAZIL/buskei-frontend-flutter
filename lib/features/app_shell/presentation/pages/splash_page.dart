@@ -1,3 +1,5 @@
+import 'package:buskei/app/routes.dart';
+import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -74,11 +76,19 @@ class _SplashPageState extends State<SplashPage>
   /// Após a conclusão, redireciona o usuário
   /// para a rota correta.
   Future<void> _initialize() async {
+    final auth = Get.find<AuthController>();
+
     await Future.delayed(const Duration(milliseconds: 2000));
+
+    await auth.checkAuthStatus();
 
     if (!mounted) return;
 
-    Get.offAllNamed('/app');
+    if (auth.isAuthenticated.value) {
+      Get.offAllNamed(AppRoutes.appShell);
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
   }
 
   @override

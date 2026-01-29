@@ -1,10 +1,10 @@
 import 'package:buskei/core/middleware/auth_middleware.dart';
 import 'package:get/get.dart';
 
-import '../features/auth/presentation/pages/splash_page.dart';
+import '../features/app_shell/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
-import '../features/auth/presentation/bindings/auth_binding.dart';
+import 'auth_binding.dart';
 
 import '../features/app_shell/presentation/pages/app_shell_page.dart';
 import '../features/app_shell/presentation/bindings/app_shell_binding.dart';
@@ -27,21 +27,18 @@ class AppRoutes {
     GetPage(
       name: splash,
       page: () => const SplashPage(),
-      binding: AuthBinding(),
       transition: Transition.fadeIn,
     ),
 
     GetPage(
       name: login,
       page: () => const LoginPage(),
-      binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),
 
     GetPage(
       name: register,
       page: () => const RegisterPage(),
-      binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),
 
@@ -49,7 +46,6 @@ class AppRoutes {
       name: appShell,
       page: () => const AppShellPage(),
       bindings: [
-        AuthBinding(),
         AppShellBinding(),
       ],
       middlewares: [AuthMiddleware()],

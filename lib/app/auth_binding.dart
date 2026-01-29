@@ -3,19 +3,19 @@ import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../../core/network/api_client.dart';
-import '../../../../core/config/api_config.dart';
+import '../core/network/api_client.dart';
+import '../core/config/api_config.dart';
 
-import '../../data/datasources/auth_remote_datasource.dart';
-import '../../data/datasources/auth_local_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
+import '../features/auth/data/datasources/auth_remote_datasource.dart';
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import '../features/auth/data/repositories/auth_repository_impl.dart';
 
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
-import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/get_current_user_usecase.dart';
+import '../features/auth/domain/usecases/login_usecase.dart';
+import '../features/auth/domain/usecases/register_usecase.dart';
+import '../features/auth/domain/usecases/logout_usecase.dart';
+import '../features/auth/domain/usecases/get_current_user_usecase.dart';
 
-import '../../domain/repositories/auth_repository.dart';
+import '../features/auth/domain/repositories/auth_repository.dart';
 
 class AuthBinding extends Bindings {
   @override

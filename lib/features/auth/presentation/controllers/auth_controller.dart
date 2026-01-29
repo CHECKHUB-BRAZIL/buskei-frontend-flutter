@@ -58,7 +58,6 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    checkAuthStatus();
   }
 
   /// Verifica se há um usuário autenticado ao iniciar o app.
