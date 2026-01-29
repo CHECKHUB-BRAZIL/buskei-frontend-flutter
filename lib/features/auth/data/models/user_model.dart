@@ -42,6 +42,10 @@ class UserModel {
   /// }
   /// ```
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    if (json['id'] == null) {
+      throw FormatException('UserModel: campo "id" ausente');
+    }
+
     return UserModel(
       id: json['id'] as String,
       nome: json['nome'] as String,

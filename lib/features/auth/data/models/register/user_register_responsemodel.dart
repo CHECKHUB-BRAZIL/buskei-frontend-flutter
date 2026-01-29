@@ -31,7 +31,7 @@ class RegisterResponseModel {
   /// Constrói um [RegisterResponseModel] a partir do JSON real do backend.
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
     return RegisterResponseModel(
-      user: UserModel.fromJson(json),
+      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String?,
       tokenType: json['token_type'] as String? ?? 'Bearer',
