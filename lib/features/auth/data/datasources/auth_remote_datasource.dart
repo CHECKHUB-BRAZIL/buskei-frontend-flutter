@@ -1,12 +1,12 @@
 import 'package:buskei/core/network/api_client.dart';
-import 'package:buskei/features/auth/data/models/logout_request_model.dart';
+import 'package:buskei/features/auth/data/models/request/logout_request_model.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/config/api_config.dart';
-import '../models/login/user_login_requestmodel.dart';
-import '../models/login/user_login_responsemodel.dart';
-import '../models/register/user_register_requestmodel.dart';
-import '../models/register/user_register_responsemodel.dart';
+import '../models/request/user_login_requestmodel.dart';
+import '../models/response/user_login_responsemodel.dart';
+import '../models/request/user_register_requestmodel.dart';
+import '../models/response/user_register_responsemodel.dart';
 import '../models/user_model.dart';
 
 /// Contrato que define as operações remotas de autenticação.

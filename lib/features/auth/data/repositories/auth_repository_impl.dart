@@ -7,8 +7,8 @@ import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
-import '../models/login/user_login_requestmodel.dart';
-import '../models/register/user_register_requestmodel.dart';
+import '../models/request/user_login_requestmodel.dart';
+import '../models/request/user_register_requestmodel.dart';
 
 /// Implementação concreta do [AuthRepository].
 ///
