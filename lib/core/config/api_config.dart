@@ -46,6 +46,8 @@ class ApiConfig {
   /// Endpoint para obter os dados do usuário autenticado
   static const String currentUserEndpoint = '/auth/me';
 
+  static const String googleLoginEndpoint = '/auth/google-login';
+
   // ---------------------------------------------------------------------------
   // Configurações de timeout
   // ---------------------------------------------------------------------------

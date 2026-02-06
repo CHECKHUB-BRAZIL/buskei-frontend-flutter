@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:buskei/features/auth/domain/usecases/login_google_usecase.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
@@ -26,12 +31,15 @@ class AuthController extends GetxController {
   /// Caso de uso responsável por obter o usuário autenticado atual
   final GetCurrentUserUseCase getCurrentUserUseCase;
 
+  final LoginWithGoogleUseCase loginWithGoogleUseCase;
+
   /// Construtor com injeção de dependências dos casos de uso
   AuthController({
     required this.loginUseCase,
     required this.registerUseCase,
     required this.logoutUseCase,
     required this.getCurrentUserUseCase,
+    required this.loginWithGoogleUseCase,
   });
 
   // ==========================
@@ -50,6 +58,14 @@ class AuthController extends GetxController {
 
   /// Indica se o usuário está autenticado
   final RxBool isAuthenticated = false.obs;
+
+  /// Retorna se o usuário está autenticado (getter seguro para middleware)
+  bool isUserAuthenticated() => isAuthenticated.value;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
+
 
   /// Método chamado automaticamente ao iniciar o controller.
   ///
@@ -183,6 +199,45 @@ class AuthController extends GetxController {
   void enterAsGuest() {
     currentUser.value = null;
     isAuthenticated.value = false;
+  }
+
+  Future<void> loginWithGoogle() async {
+    try {
+      isLoading.value = true;
+
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
+
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw Exception('Google ID Token inválido');
+      }
+
+      final result = await loginWithGoogleUseCase(
+        LoginWithGoogleParams(idToken: idToken),
+      );
+
+      result.fold(
+        (failure) {
+          Get.snackbar('Erro', failure.message);
+        },
+        (user) {
+          currentUser.value = user;
+          isAuthenticated.value = true;
+          Get.offAllNamed('/app');
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  Future<void> _saveSession(Map<String, dynamic> data) async {
+    // exemplo:
+    // access_token, refresh_token, user
   }
 
 }

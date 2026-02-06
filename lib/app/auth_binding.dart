@@ -1,3 +1,4 @@
+import 'package:buskei/features/auth/domain/usecases/login_google_usecase.dart';
 import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -58,6 +59,10 @@ class AuthBinding extends Bindings {
       LoginUseCase(Get.find()),
     );
 
+    Get.put<LoginWithGoogleUseCase>(
+      LoginWithGoogleUseCase(Get.find()),
+    );
+
     Get.put<RegisterUseCase>(
       RegisterUseCase(Get.find()),
     );
@@ -74,6 +79,7 @@ class AuthBinding extends Bindings {
     Get.put<AuthController>(
       AuthController(
         loginUseCase: Get.find(),
+        loginWithGoogleUseCase: Get.find(),
         registerUseCase: Get.find(),
         logoutUseCase: Get.find(),
         getCurrentUserUseCase: Get.find(),

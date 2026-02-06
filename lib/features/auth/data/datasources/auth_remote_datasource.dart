@@ -1,5 +1,6 @@
 import 'package:buskei/core/network/api_client.dart';
 import 'package:buskei/features/auth/data/models/request/logout_request_model.dart';
+import 'package:buskei/features/auth/data/models/response/login_with_google_response.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/config/api_config.dart';
@@ -82,6 +83,10 @@ abstract class AuthRemoteDataSource {
   /// - [NetworkException]
   /// - [ServerException]
   Future<void> logout(String refreshToken);
+
+  Future<LoginWithGoogleResponse> loginWithGoogle({
+    required String idToken,
+  });
 }
 
 /// Implementação concreta de [AuthRemoteDataSource] utilizando **Dio**.
@@ -248,6 +253,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       default:
         return ServerException('Erro inesperado: ${e.message}');
+    }
+  }
+
+  @override
+  Future<LoginWithGoogleResponse> loginWithGoogle({
+    required String idToken,
+  }) async {
+    try {
+      final response = await apiClient.dio.post(
+        '/auth/google-login',
+        data: {
+          'id_token': idToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return LoginWithGoogleResponse.fromJson(response.data);
+      }
+
+      throw ServerException(
+        'Erro ao autenticar com Google',
+        statusCode: response.statusCode,
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
     }
   }
 }

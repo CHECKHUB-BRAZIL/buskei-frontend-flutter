@@ -300,11 +300,8 @@ class _LoginPageState extends State<LoginPage> {
         SocialLoginButton(
           assetPath: "assets/icon/google.svg",
           onTap: () {
-            Get.snackbar(
-              'Em breve',
-              'Login com Google em desenvolvimento',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            final controller = Get.find<AuthController>();
+            controller.loginWithGoogle();
           },
         ),
         const SizedBox(width: 16),

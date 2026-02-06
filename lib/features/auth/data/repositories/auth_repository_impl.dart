@@ -310,4 +310,39 @@ class AuthRepositoryImpl implements AuthRepository {
       return false;
     }
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> loginWithGoogle({
+    required String idToken,
+  }) async {
+    if (!await _hasConnection()) {
+      return const Left(NetworkFailure());
+    }
+
+    try {
+      final response = await remoteDataSource.loginWithGoogle(
+        idToken: idToken,
+      );
+
+      final userEntity = response.user.toEntity();
+
+      await Future.wait([
+        localDataSource.saveAccessToken(response.accessToken),
+        localDataSource.saveRefreshToken(response.refreshToken),
+        localDataSource.cacheUser(response.user),
+      ]);
+
+      return Right(userEntity);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } catch (e) {
+      return Left(
+        UnknownFailure('Erro ao autenticar com Google: $e'),
+      );
+    }
+  }
 }

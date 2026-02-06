@@ -113,4 +113,9 @@ abstract class AuthRepository {
     required String senhaAtual,
     required String novaSenha,
   });
+
+  
+  Future<Either<Failure, UserEntity>> loginWithGoogle({
+    required String idToken,
+  });
 }
