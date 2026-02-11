@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:buskei/features/auth/domain/usecases/login_google_usecase.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
@@ -233,11 +230,4 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
-  Future<void> _saveSession(Map<String, dynamic> data) async {
-    // exemplo:
-    // access_token, refresh_token, user
-  }
-
 }

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../features/app_shell/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
-import 'auth_binding.dart';
 
 import '../features/app_shell/presentation/pages/app_shell_page.dart';
 import '../features/app_shell/presentation/bindings/app_shell_binding.dart';

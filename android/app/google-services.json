@@ -1,32 +1,46 @@
 {
   "project_info": {
-    "project_number": "123456789012",
-    "project_id": "buskei-app",
-    "storage_bucket": "buskei-app.appspot.com"
+    "project_number": "94399264017",
+    "project_id": "busquei-2da8d",
+    "storage_bucket": "busquei-2da8d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789012:android:abcdef123456",
+        "mobilesdk_app_id": "1:94399264017:android:35d76f432d1e6ba6bfc8b0",
         "android_client_info": {
-          "package_name": "com.example.buskei"
+          "package_name": "br.com.buskei.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "123456789012-xxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
-          "client_type": 1
+          "client_id": "94399264017-juls0ei6c0medokafmbqtc2e678de3p2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.buskei.app",
+            "certificate_hash": "446464eb82e6c80650b78615780c93ccedf0ed33"
+          }
         },
         {
-          "client_id": "123456789012-yyyyyyyyyyyyyyyyyyyy.apps.googleusercontent.com",
+          "client_id": "94399264017-7s68u89t0qekn85qa18oa4p466735erj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyXXXXXXXXXXXX"
+          "current_key": "AIzaSyDtXoMMkKd6mktczDTiQZw_ZwtiKfpn3vI"
         }
-      ]
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94399264017-7s68u89t0qekn85qa18oa4p466735erj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
