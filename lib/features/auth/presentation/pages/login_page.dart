@@ -304,30 +304,6 @@ class _LoginPageState extends State<LoginPage> {
             controller.loginWithGoogle();
           },
         ),
-        const SizedBox(width: 16),
-        SocialLoginButton(
-          icon: Icons.facebook,
-          backgroundColor: const Color(0xFF1877F2),
-          onTap: () {
-            Get.snackbar(
-              'Em breve',
-              'Login com Facebook em desenvolvimento',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          },
-        ),
-        const SizedBox(width: 16),
-        SocialLoginButton(
-          assetPath: "assets/icon/linkedin.png",
-          backgroundColor: const Color(0xFF0A66C2),
-          onTap: () {
-            Get.snackbar(
-              'Em breve',
-              'Login com LinkedIn em desenvolvimento',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          },
-        ),
       ],
     );
   }
