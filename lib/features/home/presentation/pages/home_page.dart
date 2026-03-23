@@ -1,21 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController linkController = TextEditingController();
+  final TextEditingController boletoController = TextEditingController();
+
+  String? result;
+  List<String> reasons = [];
+
+  void checkLink() {
+    final text = linkController.text;
+    if (text.isEmpty) return;
+
+    setState(() {
+      result = "🔴 Alto risco";
+      reasons = ["Domínio suspeito", "Não usa HTTPS"];
+    });
+  }
+
+  void checkBoleto() {
+    final text = boletoController.text;
+    if (text.isEmpty) return;
+
+    setState(() {
+      result = "🟡 Suspeito";
+      reasons = ["Banco desconhecido", "Formato inválido"];
+    });
+  }
+
+  @override
+  void dispose() {
+    linkController.dispose();
+    boletoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF0057FF),
-              Color(0xFF003FCC),
-            ],
+            colors: [Color(0xFF0057FF), Color(0xFF003FCC)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -23,77 +57,105 @@ class HomePage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // ===== HEADER =====
+              // HEADER
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    const SizedBox(height: 8), // padding extra no topo
                     Text(
                       'Busquei',
-                      textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
-                        fontSize: 38,
+                        fontSize: 32,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
-                      'Compare preços, verifique sites\n e evite golpes online.',
+                      'Evite golpes verificando links, QR Codes e boletos.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.95),
-                        height: 1.4,
+                        fontSize: 15,
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              // ===== WHITE CONTAINER =====
+              // CONTAINER
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xFFF4F4F4),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(32),
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
+                    padding: const EdgeInsets.all(24),
                     child: ListView(
-                      children: const [
-                        // ===== CAMPO DE BUSCA (fora de card) =====
-                        SearchInput(),
-                        SizedBox(height: 24),
+                      children: [
+                        // 🔗 LINK
+                        _sectionTitle("Verificar link"),
+                        const SizedBox(height: 10),
 
-                        HomeActionCard(
-                          icon: Icons.search,
-                          title: 'Pesquisar e comparar preços',
-                          description:
-                              'Busque produtos e compare valores em diferentes sites.',
+                        TextField(
+                          controller: linkController,
+                          decoration:
+                              _inputDecoration("Cole o link aqui..."),
                         ),
-                        SizedBox(height: 20),
-                        HomeActionCard(
-                          icon: Icons.security,
-                          title: 'Verificar segurança do site',
-                          description:
-                              'Analise reputação, certificados e dados técnicos.',
+
+                        const SizedBox(height: 12),
+
+                        _primaryButton(
+                          text: "Verificar link",
+                          onTap: checkLink,
                         ),
-                        SizedBox(height: 20),
-                        HomeActionCard(
-                          icon: Icons.warning_amber_rounded,
-                          title: 'Detector de golpes',
-                          description:
-                              'Analise links, boletos e QR Codes suspeitos.',
-                          isDanger: true, // botão vermelho
+
+                        const SizedBox(height: 24),
+
+                        _divider(),
+
+                        const SizedBox(height: 24),
+
+                        // 📷 QR
+                        _sectionTitle("Escanear QR Code"),
+                        const SizedBox(height: 12),
+
+                        _secondaryButton(
+                          text: "Abrir câmera",
+                          icon: Icons.qr_code_scanner,
+                          onTap: () {},
                         ),
-                        SizedBox(height: 20),
+
+                        const SizedBox(height: 24),
+
+                        _divider(),
+
+                        const SizedBox(height: 24),
+
+                        // 💸 BOLETO
+                        _sectionTitle("Verificar boleto"),
+                        const SizedBox(height: 10),
+
+                        TextField(
+                          controller: boletoController,
+                          decoration: _inputDecoration(
+                              "Cole a linha digitável do boleto..."),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        _primaryButton(
+                          text: "Verificar boleto",
+                          onTap: checkBoleto,
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        if (result != null) _resultCard(),
                       ],
                     ),
                   ),
@@ -105,105 +167,105 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-}
 
-class SearchInput extends StatelessWidget {
-  const SearchInput({super.key});
+  // COMPONENTES
 
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Digite um produto, site ou link...',
-        prefixIcon: const Icon(Icons.search),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 18,
-          horizontal: 16,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
-        ),
-      ),
-      style: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
       ),
     );
   }
-}
 
-class HomeActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final bool isDanger;
+  Widget _primaryButton({
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF0057FF),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
 
-  const HomeActionCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.description,
-    this.isDanger = false,
-  });
+  Widget _secondaryButton({
+    required String text,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon),
+      label: Text(text),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _divider() {
+    return Row(
+      children: const [
+        Expanded(child: Divider()),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text("OU"),
+        ),
+        Expanded(child: Divider()),
+      ],
+    );
+  }
+
+  Widget _sectionTitle(String text) {
+    return Text(
+      text,
+      style: GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _resultCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            description,
+            result!,
             style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(
-                icon,
-                color: Colors.white,
-                size: 28,
-              ),
-              label: Text(
-                title,
-                style: GoogleFonts.inter(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isDanger ? Colors.redAccent : const Color(0xFF0057FF),
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
+          const SizedBox(height: 8),
+          ...reasons.map((r) => Text("• $r")),
         ],
       ),
     );
