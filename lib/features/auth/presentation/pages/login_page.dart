@@ -169,11 +169,9 @@ class _LoginPageState extends State<LoginPage> {
             _buildLoginButton(),
             const SizedBox(height: 24),
             _buildDivider(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             _buildSocialButtons(),
-            const SizedBox(height: 16),
-            _buildContinueAsGuest(),
-            const SizedBox(height: 4),
+            const SizedBox(height: 24),
             _buildRegisterLink(),
           ],
         ),
@@ -337,27 +335,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildContinueAsGuest() {
-    return TextButton(
-      onPressed: () {
-        final authController = Get.find<AuthController>();
-
-        authController.enterAsGuest();
-
-        Get.offAllNamed('/home');
-      },
-      child: Text(
-        'Entrar sem login',
-        style: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF757575),
-          decoration: TextDecoration.underline,
-        ),
-      ),
     );
   }
 }
