@@ -97,9 +97,9 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(24),
                     child: ListView(
                       children: [
-                        // 🔗 LINK
-                        _sectionTitle("Verificar link"),
-                        const SizedBox(height: 10),
+                        // LINK
+                        _sectionTitle("Verificar link", Icons.link, Colors.blue),
+                        const SizedBox(height: 16),
 
                         TextField(
                           controller: linkController,
@@ -107,11 +107,12 @@ class _HomePageState extends State<HomePage> {
                               _inputDecoration("Cole o link aqui..."),
                         ),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
 
                         _primaryButton(
                           text: "Verificar link",
                           onTap: checkLink,
+                          color: const Color(0xFF0057FF),
                         ),
 
                         const SizedBox(height: 24),
@@ -120,9 +121,9 @@ class _HomePageState extends State<HomePage> {
 
                         const SizedBox(height: 24),
 
-                        // 📷 QR
-                        _sectionTitle("Escanear QR Code"),
-                        const SizedBox(height: 12),
+                        // QR
+                        _sectionTitle("Escanear QR Code", Icons.qr_code, Colors.purple),
+                        const SizedBox(height: 16),
 
                         _secondaryButton(
                           text: "Abrir câmera",
@@ -136,8 +137,8 @@ class _HomePageState extends State<HomePage> {
 
                         const SizedBox(height: 24),
 
-                        // 💸 BOLETO
-                        _sectionTitle("Verificar boleto"),
+                        // BOLETO
+                        _sectionTitle("Verificar boleto", Icons.receipt, Colors.orange),
                         const SizedBox(height: 10),
 
                         TextField(
@@ -146,11 +147,12 @@ class _HomePageState extends State<HomePage> {
                               "Cole a linha digitável do boleto..."),
                         ),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
 
                         _primaryButton(
                           text: "Verificar boleto",
                           onTap: checkBoleto,
+                          color: Colors.orange,
                         ),
 
                         const SizedBox(height: 24),
@@ -185,13 +187,14 @@ class _HomePageState extends State<HomePage> {
   Widget _primaryButton({
     required String text,
     required VoidCallback onTap,
+    required Color color,
   }) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0057FF),
+          backgroundColor: color,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -201,6 +204,7 @@ class _HomePageState extends State<HomePage> {
           text,
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
         ),
       ),
@@ -217,6 +221,8 @@ class _HomePageState extends State<HomePage> {
       icon: Icon(icon),
       label: Text(text),
       style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.purple,
+        side: const BorderSide(color: Colors.purple),
         padding: const EdgeInsets.symmetric(vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -238,21 +244,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _sectionTitle(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+  Widget _sectionTitle(String text, IconData icon, Color color) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _resultCard() {
+    Color bgColor;
+    Color textColor;
+
+    if (result!.contains("🔴")) {
+      bgColor = Colors.red.shade50;
+      textColor = Colors.red;
+    } else if (result!.contains("🟡")) {
+      bgColor = Colors.orange.shade50;
+      textColor = Colors.orange;
+    } else {
+      bgColor = Colors.green.shade50;
+      textColor = Colors.green;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: bgColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -262,6 +288,7 @@ class _HomePageState extends State<HomePage> {
             result!,
             style: GoogleFonts.inter(
               fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
           const SizedBox(height: 8),
