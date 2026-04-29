@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/app_shell_controller.dart';
 
-import '../../../home/presentation/pages/home_page.dart';
+import '../../../home/pages/home_page.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 
 class AppShellPage extends GetView<AppShellController> {
