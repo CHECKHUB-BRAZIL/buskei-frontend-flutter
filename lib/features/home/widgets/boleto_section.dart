@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'result_card.dart';
+
 class BoletoSection extends StatefulWidget {
   const BoletoSection({super.key});
 
@@ -139,55 +141,13 @@ class _BoletoSectionState extends State<BoletoSection> {
 
         const SizedBox(height: 24),
 
-        // RESULTADO
-        if (result != null) _buildResultCard(),
+        // RESULTADO (AGORA CORRETO ✅)
+        if (result != null && result != "Analisando...")
+          ResultCard(
+            result: result!,
+            reasons: reasons,
+          ),
       ],
-    );
-  }
-
-  Widget _buildResultCard() {
-    Color bgColor;
-    Color textColor;
-
-    if (result!.contains("🔴")) {
-      bgColor = Colors.red.shade50;
-      textColor = Colors.red;
-    } else if (result!.contains("🟡")) {
-      bgColor = Colors.orange.shade50;
-      textColor = Colors.orange;
-    } else {
-      bgColor = Colors.green.shade50;
-      textColor = Colors.green;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            result!,
-            style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          ...reasons.map(
-            (r) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                "• $r",
-                style: GoogleFonts.inter(fontSize: 13),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
