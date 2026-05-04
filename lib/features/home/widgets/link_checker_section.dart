@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'result_card.dart';
 
 class LinkCheckerSection extends StatefulWidget {
   const LinkCheckerSection({super.key});
@@ -17,16 +20,25 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
   List<String> reasons = [];
   bool isLoading = false;
 
-  // Troque pelo seu token real
-  final String token = "SEU_TOKEN_AQUI";
-
   Future<void> checkLink() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
+    final auth = Get.find<AuthController>();
+    final token = auth.currentUser.value?.token;
+
+    // 🔴 Validação de autenticação
+    if (token == null || token.isEmpty) {
+      setState(() {
+        result = "HIGH";
+        reasons = ["Usuário não autenticado"];
+      });
+      return;
+    }
+
     setState(() {
       isLoading = true;
-      result = "Analisando...";
+      result = null;
       reasons = [];
     });
 
@@ -43,41 +55,26 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        String risk = data['risk'];
-        List<dynamic> apiReasons = data['reasons'];
-
         setState(() {
-          result = _mapRisk(risk);
-          reasons = apiReasons.map((e) => e.toString()).toList();
+          result = data['risk']; // 👈 agora usa direto HIGH/MEDIUM/LOW
+          reasons =
+              (data['reasons'] as List).map((e) => e.toString()).toList();
         });
       } else {
         setState(() {
-          result = "Erro ao analisar";
-          reasons = ["Servidor retornou erro (${response.statusCode})"];
+          result = "HIGH";
+          reasons = ["Erro do servidor (${response.statusCode})"];
         });
       }
     } catch (e) {
       setState(() {
-        result = "Erro de conexão";
-        reasons = ["Não foi possível conectar ao servidor"];
+        result = "HIGH";
+        reasons = ["Erro de conexão com o servidor"];
       });
     } finally {
       setState(() {
         isLoading = false;
       });
-    }
-  }
-
-  String _mapRisk(String risk) {
-    switch (risk) {
-      case "HIGH":
-        return "🔴 Alto risco";
-      case "MEDIUM":
-        return "🟡 Atenção";
-      case "LOW":
-        return "🟢 Seguro";
-      default:
-        return "⚪ Desconhecido";
     }
   }
 
@@ -159,52 +156,12 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
         const SizedBox(height: 24),
 
         // RESULTADO
-        if (result != null) _buildResultCard(),
-      ],
-    );
-  }
-
-  Widget _buildResultCard() {
-    Color bgColor;
-    Color textColor;
-
-    if (result!.contains("🔴")) {
-      bgColor = Colors.red.shade50;
-      textColor = Colors.red;
-    } else if (result!.contains("🟡")) {
-      bgColor = Colors.orange.shade50;
-      textColor = Colors.orange;
-    } else {
-      bgColor = Colors.green.shade50;
-      textColor = Colors.green;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            result!,
-            style: GoogleFonts.inter(
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+        if (result != null)
+          ResultCard(
+            result: result!,
+            reasons: reasons,
           ),
-          const SizedBox(height: 8),
-          ...reasons.map((r) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  "• $r",
-                  style: GoogleFonts.inter(fontSize: 13),
-                ),
-              )),
-        ],
-      ),
+      ],
     );
   }
 }
