@@ -27,7 +27,7 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
     final auth = Get.find<AuthController>();
     final token = auth.currentUser.value?.token;
 
-    // 🔴 Validação de autenticação
+    // Validação de autenticação
     if (token == null || token.isEmpty) {
       setState(() {
         result = "HIGH";

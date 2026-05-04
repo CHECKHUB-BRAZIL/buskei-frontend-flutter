@@ -1,4 +1,6 @@
+import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'result_card.dart';
@@ -19,6 +21,18 @@ class _BoletoSectionState extends State<BoletoSection> {
 
   void _analyzeBoleto(String linha) {
     if (linha.isEmpty) return;
+
+    final auth = Get.find<AuthController>();
+    final token = auth.currentUser.value?.token;
+
+    // Validação de autenticação
+    if (token == null || token.isEmpty) {
+      setState(() {
+        result = "HIGH";
+        reasons = ["Usuário não autenticado"];
+      });
+      return;
+    }
 
     setState(() {
       isLoading = true;
