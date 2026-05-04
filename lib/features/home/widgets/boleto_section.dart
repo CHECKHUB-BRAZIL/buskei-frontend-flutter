@@ -22,7 +22,7 @@ class _BoletoSectionState extends State<BoletoSection> {
 
     setState(() {
       isLoading = true;
-      result = "Analisando...";
+      result = null;
       reasons = [];
     });
 
@@ -32,25 +32,25 @@ class _BoletoSectionState extends State<BoletoSection> {
 
         // Regras simuladas
         if (linha.length < 40) {
-          result = "🔴 Alto risco";
+          result = "HIGH";
           reasons = [
             "A linha digitável é muito curta e não segue o padrão esperado.",
             "Boletos válidos geralmente possuem 47 ou 48 dígitos.",
           ];
         } else if (!RegExp(r'^\d+$').hasMatch(linha)) {
-          result = "🔴 Alto risco";
+          result = "HIGH";
           reasons = [
             "A linha digitável contém caracteres inválidos.",
             "Boletos devem conter apenas números.",
           ];
         } else if (linha.startsWith("000")) {
-          result = "🟡 Atenção";
+          result = "MEDIUM";
           reasons = [
             "O código do banco parece incomum ou desconhecido.",
             "Verifique se o banco emissor é confiável.",
           ];
         } else {
-          result = "🟢 Seguro";
+          result = "LOW";
           reasons = [
             "A estrutura da linha digitável parece válida.",
             "Nenhum problema evidente foi identificado.",
@@ -141,8 +141,8 @@ class _BoletoSectionState extends State<BoletoSection> {
 
         const SizedBox(height: 24),
 
-        // RESULTADO (AGORA CORRETO ✅)
-        if (result != null && result != "Analisando...")
+        // RESULTADO
+        if (result != null)
           ResultCard(
             result: result!,
             reasons: reasons,
