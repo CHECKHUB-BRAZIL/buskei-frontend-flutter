@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../infrastructure/models/boleto_validation_response_model.dart';
+
 class BoletoResultCard extends StatelessWidget {
-  final String status;
-  final int riskScore;
-
-  final String amountFormatted;
-
-  final String dueDateFormatted;
-
-  final bool isExpired;
-
-  final List<String> reasons;
+  final BoletoValidationResponseModel result;
 
   const BoletoResultCard({
     super.key,
-    required this.status,
-    required this.riskScore,
-    required this.amountFormatted,
-    required this.dueDateFormatted,
-    required this.isExpired,
-    required this.reasons,
+    required this.result,
   });
 
   @override
   Widget build(BuildContext context) {
-    final _BoletoVisual visual = _getVisual(status);
+    final _BoletoVisual visual = _getVisual(result.status);
 
     return Container(
       width: double.infinity,
@@ -77,7 +65,7 @@ class BoletoResultCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      'Pontuação de risco: $riskScore/100',
+                      'Pontuação de risco: ${result.riskScore}/100',
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         color: Colors.black87,
@@ -98,7 +86,7 @@ class BoletoResultCard extends StatelessWidget {
           _InfoTile(
             icon: Icons.attach_money,
             label: 'Valor',
-            value: amountFormatted,
+            value: result.amountFormatted,
           ),
 
           const SizedBox(height: 12),
@@ -106,29 +94,44 @@ class BoletoResultCard extends StatelessWidget {
           _InfoTile(
             icon: Icons.calendar_today,
             label: 'Vencimento',
-            value: dueDateFormatted,
+            value: result.dueDateFormatted,
           ),
 
           const SizedBox(height: 12),
 
           _InfoTile(
-            icon: isExpired
+            icon: result.isExpired
                 ? Icons.warning_amber_rounded
                 : Icons.check_circle,
             label: 'Situação',
-            value: isExpired
+            value: result.isExpired
                 ? 'Boleto vencido'
                 : 'Dentro do prazo',
-            valueColor: isExpired
+            valueColor: result.isExpired
                 ? Colors.red.shade700
                 : Colors.green.shade700,
+          ),
+
+          const SizedBox(height: 12),
+
+          _InfoTile(
+            icon: result.isReal
+                ? Icons.verified
+                : Icons.gpp_bad,
+            label: 'Autenticidade',
+            value: result.isReal
+                ? 'Estrutura válida'
+                : 'Estrutura inválida',
+            valueColor: result.isReal
+                ? Colors.green.shade700
+                : Colors.red.shade700,
           ),
 
           // =====================================================
           // ALERTAS
           // =====================================================
 
-          if (reasons.isNotEmpty) ...[
+          if (result.reasons.isNotEmpty) ...[
             const SizedBox(height: 24),
 
             Text(
@@ -142,7 +145,7 @@ class BoletoResultCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            ...reasons.map(
+            ...result.reasons.map(
               (reason) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(

@@ -1,9 +1,13 @@
-import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'result_card.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
+
+import '../../infrastructure/models/boleto_validation_response_model.dart';
+import '../../infrastructure/services/api_service.dart';
+
+import 'boleto_result_card.dart';
 
 class BoletoSection extends StatefulWidget {
   const BoletoSection({super.key});
@@ -15,64 +19,49 @@ class BoletoSection extends StatefulWidget {
 class _BoletoSectionState extends State<BoletoSection> {
   final TextEditingController _controller = TextEditingController();
 
-  String? result;
-  List<String> reasons = [];
-  bool isLoading = false;
+  BoletoValidationResponseModel? boletoResult;
 
-  void _analyzeBoleto(String linha) {
-    if (linha.isEmpty) return;
+  bool isLoading = false;
+  String? errorMessage;
+
+  Future<void> _analyzeBoleto(String code) async {
+    if (code.isEmpty) return;
 
     final auth = Get.find<AuthController>();
     final token = auth.currentUser.value?.token;
 
-    // Validação de autenticação
+    // Usuário não autenticado
     if (token == null || token.isEmpty) {
       setState(() {
-        result = "HIGH";
-        reasons = ["Usuário não autenticado"];
+        errorMessage = "Usuário não autenticado";
       });
+
       return;
     }
 
     setState(() {
       isLoading = true;
-      result = null;
-      reasons = [];
+      errorMessage = null;
+      boletoResult = null;
     });
 
-    Future.delayed(const Duration(seconds: 1), () {
+    try {
+      ApiService.setToken(token);
+
+      final response = await ApiService.validateBoleto(code);
+
+      setState(() {
+        boletoResult = response;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+      });
+    } finally {
       setState(() {
         isLoading = false;
-
-        // Regras simuladas
-        if (linha.length < 40) {
-          result = "HIGH";
-          reasons = [
-            "A linha digitável é muito curta e não segue o padrão esperado.",
-            "Boletos válidos geralmente possuem 47 ou 48 dígitos.",
-          ];
-        } else if (!RegExp(r'^\d+$').hasMatch(linha)) {
-          result = "HIGH";
-          reasons = [
-            "A linha digitável contém caracteres inválidos.",
-            "Boletos devem conter apenas números.",
-          ];
-        } else if (linha.startsWith("000")) {
-          result = "MEDIUM";
-          reasons = [
-            "O código do banco parece incomum ou desconhecido.",
-            "Verifique se o banco emissor é confiável.",
-          ];
-        } else {
-          result = "LOW";
-          reasons = [
-            "A estrutura da linha digitável parece válida.",
-            "Nenhum problema evidente foi identificado.",
-            "Mesmo assim, confirme o beneficiário antes de pagar.",
-          ];
-        }
       });
-    });
+    }
   }
 
   @override
@@ -89,7 +78,11 @@ class _BoletoSectionState extends State<BoletoSection> {
         // TÍTULO
         Row(
           children: [
-            const Icon(Icons.receipt, color: Colors.orange, size: 20),
+            const Icon(
+              Icons.receipt,
+              color: Colors.orange,
+              size: 20,
+            ),
             const SizedBox(width: 6),
             Text(
               "Verificar boleto",
@@ -126,10 +119,14 @@ class _BoletoSectionState extends State<BoletoSection> {
           child: ElevatedButton(
             onPressed: isLoading
                 ? null
-                : () => _analyzeBoleto(_controller.text.trim()),
+                : () => _analyzeBoleto(
+                      _controller.text.trim(),
+                    ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                vertical: 14,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -155,11 +152,28 @@ class _BoletoSectionState extends State<BoletoSection> {
 
         const SizedBox(height: 24),
 
+        // ERRO
+        if (errorMessage != null)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              errorMessage!,
+              style: GoogleFonts.inter(
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
         // RESULTADO
-        if (result != null)
-          ResultCard(
-            result: result!,
-            reasons: reasons,
+        if (boletoResult != null)
+          BoletoResultCard(
+            result: boletoResult!,
           ),
       ],
     );

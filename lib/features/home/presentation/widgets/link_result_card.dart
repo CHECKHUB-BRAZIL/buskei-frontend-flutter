@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../infrastructure/models/analyze_link_response_model.dart';
+
 class LinkResultCard extends StatelessWidget {
-  final String risk;
-  final int riskScore;
-  final List<String> reasons;
-  final List<String> positives;
+  final AnalyzeLinkResponseModel result;
 
   const LinkResultCard({
     super.key,
-    required this.risk,
-    required this.riskScore,
-    required this.reasons,
-    required this.positives,
+    required this.result,
   });
 
   @override
   Widget build(BuildContext context) {
-    final _RiskVisual visual = _getRiskVisual(risk);
+    final _RiskVisual visual = _getRiskVisual(result.risk);
 
     return Container(
       width: double.infinity,
@@ -69,7 +65,7 @@ class LinkResultCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      'Pontuação de risco: $riskScore/100',
+                      'Pontuação de risco: ${result.riskScore}/100',
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         color: Colors.black87,
@@ -82,10 +78,42 @@ class LinkResultCard extends StatelessWidget {
           ),
 
           // =========================================================
+          // URL
+          // =========================================================
+
+          const SizedBox(height: 20),
+
+          Text(
+            'URL analisada',
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              result.url,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+
+          // =========================================================
           // POSITIVOS
           // =========================================================
 
-          if (positives.isNotEmpty) ...[
+          if (result.positives.isNotEmpty) ...[
             const SizedBox(height: 20),
 
             Text(
@@ -99,7 +127,7 @@ class LinkResultCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            ...positives.map(
+            ...result.positives.map(
               (positive) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
@@ -132,7 +160,7 @@ class LinkResultCard extends StatelessWidget {
           // ALERTAS
           // =========================================================
 
-          if (reasons.isNotEmpty) ...[
+          if (result.reasons.isNotEmpty) ...[
             const SizedBox(height: 20),
 
             Text(
@@ -146,7 +174,7 @@ class LinkResultCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            ...reasons.map(
+            ...result.reasons.map(
               (reason) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(

@@ -1,10 +1,11 @@
-import 'dart:convert';
 import 'package:buskei/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:buskei/features/home/infrastructure/models/analyze_link_response_model.dart';
+import 'package:buskei/features/home/infrastructure/services/api_service.dart';
+import 'package:buskei/features/home/presentation/widgets/link_result_card.dart';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'result_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LinkCheckerSection extends StatefulWidget {
   const LinkCheckerSection({super.key});
@@ -16,60 +17,63 @@ class LinkCheckerSection extends StatefulWidget {
 class _LinkCheckerSectionState extends State<LinkCheckerSection> {
   final TextEditingController _controller = TextEditingController();
 
-  String? result;
-  List<String> reasons = [];
+  AnalyzeLinkResponseModel? analysis;
+
   bool isLoading = false;
 
   Future<void> checkLink() async {
     final text = _controller.text.trim();
+
     if (text.isEmpty) return;
 
     final auth = Get.find<AuthController>();
+
     final token = auth.currentUser.value?.token;
 
-    // Validação de autenticação
+    // =========================================================
+    // VALIDA AUTENTICAÇÃO
+    // =========================================================
+
     if (token == null || token.isEmpty) {
       setState(() {
-        result = "HIGH";
-        reasons = ["Usuário não autenticado"];
+        analysis = AnalyzeLinkResponseModel(
+          url: text,
+          risk: "HIGH",
+          riskScore: 100,
+          reasons: [
+            "Usuário não autenticado",
+          ],
+          positives: [],
+        );
       });
+
       return;
     }
 
     setState(() {
       isLoading = true;
-      result = null;
-      reasons = [];
+      analysis = null;
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/v1/links/analyze'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({"url": text}),
-      );
+      ApiService.setToken(token);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      final response = await ApiService.analyzeLink(text);
 
-        setState(() {
-          result = data['risk']; // 👈 agora usa direto HIGH/MEDIUM/LOW
-          reasons =
-              (data['reasons'] as List).map((e) => e.toString()).toList();
-        });
-      } else {
-        setState(() {
-          result = "HIGH";
-          reasons = ["Erro do servidor (${response.statusCode})"];
-        });
-      }
+      setState(() {
+        analysis = response;
+      });
     } catch (e) {
       setState(() {
-        result = "HIGH";
-        reasons = ["Erro de conexão com o servidor"];
+        analysis = AnalyzeLinkResponseModel(
+          url: text,
+          risk: "HIGH",
+          riskScore: 100,
+          reasons: [
+            "Erro de conexão com o servidor",
+          ],
+          positives: [],
+        );
       });
     } finally {
       setState(() {
@@ -89,11 +93,20 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // =========================================================
         // TÍTULO
+        // =========================================================
+
         Row(
           children: [
-            const Icon(Icons.link, color: Colors.blue, size: 20),
+            const Icon(
+              Icons.link,
+              color: Colors.blue,
+              size: 20,
+            ),
+
             const SizedBox(width: 6),
+
             Text(
               "Verificar link",
               style: GoogleFonts.inter(
@@ -106,7 +119,10 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
 
         const SizedBox(height: 16),
 
+        // =========================================================
         // INPUT
+        // =========================================================
+
         TextField(
           controller: _controller,
           decoration: InputDecoration(
@@ -122,14 +138,21 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
 
         const SizedBox(height: 16),
 
+        // =========================================================
         // BOTÃO
+        // =========================================================
+
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: isLoading ? null : checkLink,
+            onPressed: isLoading
+                ? null
+                : checkLink,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0057FF),
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                vertical: 14,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -155,11 +178,13 @@ class _LinkCheckerSectionState extends State<LinkCheckerSection> {
 
         const SizedBox(height: 24),
 
+        // =========================================================
         // RESULTADO
-        if (result != null)
-          ResultCard(
-            result: result!,
-            reasons: reasons,
+        // =========================================================
+
+        if (analysis != null)
+          LinkResultCard(
+            result: analysis!,
           ),
       ],
     );
