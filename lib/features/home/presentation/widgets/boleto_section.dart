@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,12 +23,30 @@ class _BoletoSectionState extends State<BoletoSection> {
   BoletoValidationResponseModel? boletoResult;
 
   bool isLoading = false;
+
   String? errorMessage;
 
   Future<void> _analyzeBoleto(String code) async {
     if (code.isEmpty) return;
 
+    final cleanedCode = code.replaceAll(
+      RegExp(r'\D'),
+      '',
+    );
+
+    // valida tamanho
+    if (cleanedCode.length < 44 ||
+        cleanedCode.length > 48) {
+      setState(() {
+        errorMessage =
+            "O boleto deve conter entre 44 e 48 dígitos.";
+      });
+
+      return;
+    }
+
     final auth = Get.find<AuthController>();
+
     final token = auth.currentUser.value?.token;
 
     // Usuário não autenticado
@@ -48,7 +67,9 @@ class _BoletoSectionState extends State<BoletoSection> {
     try {
       ApiService.setToken(token);
 
-      final response = await ApiService.validateBoleto(code);
+      final response = await ApiService.validateBoleto(
+        cleanedCode,
+      );
 
       setState(() {
         boletoResult = response;
@@ -67,6 +88,7 @@ class _BoletoSectionState extends State<BoletoSection> {
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
@@ -83,7 +105,9 @@ class _BoletoSectionState extends State<BoletoSection> {
               color: Colors.orange,
               size: 20,
             ),
+
             const SizedBox(width: 6),
+
             Text(
               "Verificar boleto",
               style: GoogleFonts.inter(
@@ -99,13 +123,26 @@ class _BoletoSectionState extends State<BoletoSection> {
         // INPUT
         TextField(
           controller: _controller,
+
           keyboardType: TextInputType.number,
+
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+
+            LengthLimitingTextInputFormatter(48),
+          ],
+
           decoration: InputDecoration(
-            hintText: "Cole a linha digitável do boleto...",
+            hintText:
+                "Cole a linha digitável do boleto...",
+
             filled: true,
+
             fillColor: Colors.white,
+
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
+
               borderSide: BorderSide.none,
             ),
           ),
@@ -116,21 +153,26 @@ class _BoletoSectionState extends State<BoletoSection> {
         // BOTÃO
         SizedBox(
           width: double.infinity,
+
           child: ElevatedButton(
             onPressed: isLoading
                 ? null
                 : () => _analyzeBoleto(
                       _controller.text.trim(),
                     ),
+
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
+
               padding: const EdgeInsets.symmetric(
                 vertical: 14,
               ),
+
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+
             child: isLoading
                 ? const SizedBox(
                     height: 18,
@@ -156,13 +198,18 @@ class _BoletoSectionState extends State<BoletoSection> {
         if (errorMessage != null)
           Container(
             width: double.infinity,
+
             padding: const EdgeInsets.all(16),
+
             decoration: BoxDecoration(
               color: Colors.red.shade50,
+
               borderRadius: BorderRadius.circular(16),
             ),
+
             child: Text(
               errorMessage!,
+
               style: GoogleFonts.inter(
                 color: Colors.red,
                 fontWeight: FontWeight.w500,

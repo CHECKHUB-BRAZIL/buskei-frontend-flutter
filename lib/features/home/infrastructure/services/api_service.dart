@@ -68,7 +68,7 @@ class ApiService {
   static Future<BoletoValidationResponseModel>
   validateBoleto(String code) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/boleto/validate'),
+      Uri.parse('$baseUrl/boletos/validate'),
 
       headers: _headers(),
 

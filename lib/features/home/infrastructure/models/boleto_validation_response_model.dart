@@ -55,7 +55,7 @@ class BoletoValidationResponseModel {
 
       isReal: json['is_real'] as bool,
 
-      amount: (json['amount'] as num).toDouble(),
+      amount: double.parse(json['amount'].toString()),
 
       amountFormatted: json['amount_formatted'] as String,
 
