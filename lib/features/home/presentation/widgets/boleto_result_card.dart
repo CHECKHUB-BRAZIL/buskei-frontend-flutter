@@ -13,7 +13,9 @@ class BoletoResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _BoletoVisual visual = _getVisual(result.status);
+    final _BoletoVisual visual = _getVisual(
+      result.status,
+    );
 
     return Container(
       width: double.infinity,
@@ -51,7 +53,8 @@ class BoletoResultCard extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
                       visual.title,
@@ -147,9 +150,11 @@ class BoletoResultCard extends StatelessWidget {
 
             ...result.reasons.map(
               (reason) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding:
+                    const EdgeInsets.only(bottom: 8),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Icon(
                       Icons.warning_amber_rounded,
@@ -179,40 +184,59 @@ class BoletoResultCard extends StatelessWidget {
   }
 
   _BoletoVisual _getVisual(String status) {
-    switch (status.toLowerCase()) {
-      case 'fraud_suspect':
-        return _BoletoVisual(
-          title: 'Boleto suspeito',
-          backgroundColor: Colors.red.shade50,
-          borderColor: Colors.red.shade200,
-          iconBackgroundColor: Colors.red.shade100,
-          iconColor: Colors.red.shade700,
-          textColor: Colors.red.shade900,
-          icon: Icons.gpp_bad,
-        );
+    final normalizedStatus = status
+        .trim()
+        .toLowerCase();
 
-      case 'suspicious':
-        return _BoletoVisual(
-          title: 'Boleto requer atenção',
-          backgroundColor: Colors.orange.shade50,
-          borderColor: Colors.orange.shade200,
-          iconBackgroundColor: Colors.orange.shade100,
-          iconColor: Colors.orange.shade700,
-          textColor: Colors.orange.shade900,
-          icon: Icons.warning_amber_rounded,
-        );
-
-      default:
-        return _BoletoVisual(
-          title: 'Boleto parece válido',
-          backgroundColor: Colors.green.shade50,
-          borderColor: Colors.green.shade200,
-          iconBackgroundColor: Colors.green.shade100,
-          iconColor: Colors.green.shade700,
-          textColor: Colors.green.shade900,
-          icon: Icons.verified,
-        );
+    // força por score também
+    if (normalizedStatus == 'fraud_suspect' ||
+        result.riskScore >= 80) {
+      return _BoletoVisual(
+        title: 'Boleto suspeito',
+        backgroundColor: Colors.red.shade50,
+        borderColor: Colors.red.shade200,
+        iconBackgroundColor: Colors.red.shade100,
+        iconColor: Colors.red.shade700,
+        textColor: Colors.red.shade900,
+        icon: Icons.gpp_bad,
+      );
     }
+
+    if (normalizedStatus == 'suspicious' ||
+        result.riskScore >= 40) {
+      return _BoletoVisual(
+        title: 'Boleto requer atenção',
+        backgroundColor: Colors.orange.shade50,
+        borderColor: Colors.orange.shade200,
+        iconBackgroundColor: Colors.orange.shade100,
+        iconColor: Colors.orange.shade700,
+        textColor: Colors.orange.shade900,
+        icon: Icons.warning_amber_rounded,
+      );
+    }
+
+    if (normalizedStatus == 'valid') {
+      return _BoletoVisual(
+        title: 'Boleto válido',
+        backgroundColor: Colors.green.shade50,
+        borderColor: Colors.green.shade200,
+        iconBackgroundColor: Colors.green.shade100,
+        iconColor: Colors.green.shade700,
+        textColor: Colors.green.shade900,
+        icon: Icons.verified,
+      );
+    }
+
+    // fallback
+    return _BoletoVisual(
+      title: 'Status desconhecido',
+      backgroundColor: Colors.grey.shade100,
+      borderColor: Colors.grey.shade300,
+      iconBackgroundColor: Colors.grey.shade200,
+      iconColor: Colors.grey.shade700,
+      textColor: Colors.grey.shade900,
+      icon: Icons.help_outline,
+    );
   }
 }
 
@@ -259,7 +283,8 @@ class _InfoTile extends StatelessWidget {
             value,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: valueColor ?? Colors.black87,
+              color:
+                  valueColor ?? Colors.black87,
             ),
           ),
         ),
@@ -272,9 +297,11 @@ class _BoletoVisual {
   final String title;
 
   final Color backgroundColor;
+
   final Color borderColor;
 
   final Color iconBackgroundColor;
+
   final Color iconColor;
 
   final Color textColor;

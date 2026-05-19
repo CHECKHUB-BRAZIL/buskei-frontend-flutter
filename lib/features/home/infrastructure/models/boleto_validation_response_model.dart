@@ -74,7 +74,9 @@ class BoletoValidationResponseModel {
 
       riskScore: json['risk_score'] as int,
 
-      status: json['status'] as String,
+      status: (json['status'] as String)
+        .trim()
+        .toLowerCase(),
 
       reasons: List<String>.from(
         json['reasons'] ?? [],

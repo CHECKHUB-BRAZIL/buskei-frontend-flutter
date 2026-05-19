@@ -43,10 +43,12 @@ class BoletoAnalysisEntity {
     required this.reasons,
   });
 
-  bool get isValid => status == 'valid';
+  bool get isValid =>
+      status.trim().toLowerCase() == 'valid';
 
-  bool get isSuspicious => status == 'suspicious';
+  bool get isSuspicious =>
+      status.trim().toLowerCase() == 'suspicious';
 
   bool get isFraudSuspect =>
-      status == 'fraud_suspect';
+      status.trim().toLowerCase() == 'fraud_suspect';
 }
