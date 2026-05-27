@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/analyze_link_response_model.dart';
 import '../models/boleto_validation_response_model.dart';
+import '../models/qrcode_response_model.dart';
 
 class ApiService {
   static const String baseUrl =
@@ -87,6 +88,35 @@ class ApiService {
 
     throw Exception(
       'Erro ao validar boleto: ${response.body}',
+    );
+  }
+
+  // ==========================================================
+  // ANALISAR QRCODE
+  // ==========================================================
+
+  static Future<QRCodeResponseModel>
+  validateQRCode(String content) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/qrcode/analyze'),
+
+      headers: _headers(),
+
+      body: jsonEncode({
+        'content': content,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      return QRCodeResponseModel.fromJson(
+        data,
+      );
+    }
+
+    throw Exception(
+      'Erro ao analisar QRCode: ${response.body}',
     );
   }
 }
