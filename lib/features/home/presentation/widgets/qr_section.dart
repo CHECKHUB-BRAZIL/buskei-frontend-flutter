@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../infrastructure/models/qrcode_response_model.dart';
 import '../../infrastructure/services/api_service.dart';
+import '../pages/qrcode_scanner_page.dart';
 
 import 'qrcode_result_card.dart';
 
@@ -81,11 +82,21 @@ class _QRSectionState
     }
   }
 
-  void _openCamera() {
-    setState(() {
-      errorMessage =
-          "Leitura por câmera ainda não integrada.";
-    });
+  Future<void> _openCamera() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const QRCodeScannerPage(),
+      ),
+    );
+
+    if (result != null &&
+        result is String) {
+      _controller.text = result;
+
+      await _analyzeQR(result);
+    }
   }
 
   @override
