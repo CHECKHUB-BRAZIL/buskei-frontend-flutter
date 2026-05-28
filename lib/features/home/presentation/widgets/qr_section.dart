@@ -132,34 +132,43 @@ class _QRSectionState
         // BOTÃO CÂMERA
         // =====================================================
 
-        OutlinedButton.icon(
-          onPressed: _openCamera,
+        SizedBox(
+          width: double.infinity,
 
-          icon: const Icon(
-            Icons.qr_code_scanner,
-          ),
+          child: OutlinedButton.icon(
+            onPressed: _openCamera,
 
-          label: const Text(
-            "Abrir câmera",
-          ),
-
-          style: OutlinedButton.styleFrom(
-            foregroundColor:
-                Colors.purple,
-
-            side: const BorderSide(
-              color: Colors.purple,
+            icon: const Icon(
+              Icons.qr_code_scanner_rounded,
+              size: 22,
             ),
 
-            padding:
-                const EdgeInsets.symmetric(
-              vertical: 14,
+            label: Text(
+              "Escanear QR Code",
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
 
-            shape:
-                RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.purple,
+
+              backgroundColor: Colors.purple.shade50,
+
+              side: BorderSide(
+                color: Colors.purple.shade200,
+                width: 1.5,
+              ),
+
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 18,
+              ),
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ),
