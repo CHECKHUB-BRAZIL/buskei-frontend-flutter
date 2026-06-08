@@ -13,9 +13,7 @@ class QRCodeResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final QRCodeVisual visual = _getVisual(
-      result.status,
-    );
+    final QRCodeVisual visual = _getVisual(result.status);
 
     return Container(
       width: double.infinity,
@@ -23,13 +21,10 @@ class QRCodeResultCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: visual.backgroundColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: visual.borderColor,
-        ),
+        border: Border.all(color: visual.borderColor),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // =====================================================
           // HEADER
@@ -40,8 +35,7 @@ class QRCodeResultCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color:
-                      visual.iconBackgroundColor,
+                  color: visual.iconBackgroundColor,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -55,18 +49,14 @@ class QRCodeResultCard extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       visual.title,
-                      style:
-                          GoogleFonts.inter(
+                      style: GoogleFonts.inter(
                         fontSize: 18,
-                        fontWeight:
-                            FontWeight.w700,
-                        color:
-                            visual.textColor,
+                        fontWeight: FontWeight.w700,
+                        color: visual.textColor,
                       ),
                     ),
 
@@ -74,11 +64,9 @@ class QRCodeResultCard extends StatelessWidget {
 
                     Text(
                       'Pontuação de risco: ${result.riskScore}/100',
-                      style:
-                          GoogleFonts.inter(
+                      style: GoogleFonts.inter(
                         fontSize: 13,
-                        color:
-                            Colors.black87,
+                        color: Colors.black87,
                       ),
                     ),
                   ],
@@ -102,13 +90,9 @@ class QRCodeResultCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           _InfoTile(
-            icon: result.isValid
-                ? Icons.verified
-                : Icons.gpp_bad,
+            icon: result.isValid ? Icons.verified : Icons.gpp_bad,
             label: 'Validação',
-            value: result.isValid
-                ? 'QRCode válido'
-                : 'QRCode suspeito',
+            value: result.isValid ? 'QRCode válido' : 'QRCode suspeito',
             valueColor: result.isValid
                 ? Colors.green.shade700
                 : Colors.red.shade700,
@@ -128,7 +112,6 @@ class QRCodeResultCard extends StatelessWidget {
 
           if (result.pixKey != null) ...[
             const SizedBox(height: 12),
-
             _InfoTile(
               icon: Icons.pix,
               label: 'Chave PIX',
@@ -138,7 +121,6 @@ class QRCodeResultCard extends StatelessWidget {
 
           if (result.merchantName != null) ...[
             const SizedBox(height: 12),
-
             _InfoTile(
               icon: Icons.store,
               label: 'Recebedor',
@@ -146,13 +128,44 @@ class QRCodeResultCard extends StatelessWidget {
             ),
           ],
 
+          if (result.city != null) ...[
+            const SizedBox(height: 12),
+            _InfoTile(
+              icon: Icons.location_city,
+              label: 'Cidade',
+              value: result.city!,
+            ),
+          ],
+
           if (result.amount != null) ...[
             const SizedBox(height: 12),
-
             _InfoTile(
               icon: Icons.attach_money,
               label: 'Valor',
-              value: result.amount!,
+              value: 'R\$ ${result.amount!.toStringAsFixed(2)}',
+            ),
+          ],
+
+          if (result.txid != null) ...[
+            const SizedBox(height: 12),
+            _InfoTile(
+              icon: Icons.tag,
+              label: 'TXID',
+              value: result.txid!,
+            ),
+          ],
+
+          if (result.isValidCrc != null) ...[
+            const SizedBox(height: 12),
+            _InfoTile(
+              icon: result.isValidCrc!
+                  ? Icons.check_circle
+                  : Icons.cancel,
+              label: 'CRC',
+              value: result.isValidCrc! ? 'CRC válido' : 'CRC inválido',
+              valueColor: result.isValidCrc!
+                  ? Colors.green.shade700
+                  : Colors.red.shade700,
             ),
           ],
 
@@ -162,28 +175,68 @@ class QRCodeResultCard extends StatelessWidget {
 
           if (result.detectedUrl != null) ...[
             const SizedBox(height: 12),
-
             _InfoTile(
               icon: Icons.link,
               label: 'URL',
               value: result.detectedUrl!,
-              valueColor:
-                  result.isSuspiciousUrl
-                      ? Colors.red.shade700
-                      : Colors.blue.shade700,
+              valueColor: result.isSuspiciousUrl
+                  ? Colors.red.shade700
+                  : Colors.blue.shade700,
             ),
           ],
 
           if (result.hasUnknownDomain) ...[
             const SizedBox(height: 12),
-
             _InfoTile(
               icon: Icons.warning,
               label: 'Domínio',
-              value:
-                  'Domínio desconhecido',
-              valueColor:
-                  Colors.orange.shade700,
+              value: 'Domínio desconhecido',
+              valueColor: Colors.orange.shade700,
+            ),
+          ],
+
+          // =====================================================
+          // POSITIVOS
+          // =====================================================
+
+          if (result.positives.isNotEmpty) ...[
+            const SizedBox(height: 24),
+
+            Text(
+              'Pontos positivos',
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Colors.green.shade800,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            ...result.positives.map(
+              (positive) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.green.shade700,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        positive,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
 
@@ -191,49 +244,44 @@ class QRCodeResultCard extends StatelessWidget {
           // ALERTAS
           // =====================================================
 
-          if (result.reason != null &&
-              result.reason!.isNotEmpty) ...[
+          if (result.reasons.isNotEmpty) ...[
             const SizedBox(height: 24),
 
             Text(
               'Alertas encontrados',
               style: GoogleFonts.inter(
                 fontSize: 15,
-                fontWeight:
-                    FontWeight.w700,
-                color:
-                    Colors.red.shade800,
+                fontWeight: FontWeight.w700,
+                color: Colors.red.shade800,
               ),
             ),
 
             const SizedBox(height: 10),
 
-            Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons
-                      .warning_amber_rounded,
-                  color:
-                      Colors.red.shade700,
-                  size: 18,
-                ),
-
-                const SizedBox(width: 8),
-
-                Expanded(
-                  child: Text(
-                    result.reason!,
-                    style:
-                        GoogleFonts.inter(
-                      fontSize: 14,
-                      color:
-                          Colors.black87,
+            ...result.reasons.map(
+              (reason) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.red.shade700,
+                      size: 18,
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        reason,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ],
@@ -241,65 +289,40 @@ class QRCodeResultCard extends StatelessWidget {
     );
   }
 
-  QRCodeVisual _getVisual(
-    String status,
-  ) {
-    final normalizedStatus = status
-        .trim()
-        .toLowerCase();
+  QRCodeVisual _getVisual(String status) {
+    final normalizedStatus = status.trim().toLowerCase();
 
-    if (normalizedStatus ==
-            'malicious' ||
-        result.riskScore >= 80) {
+    if (normalizedStatus == 'malicious' || result.riskScore >= 80) {
       return QRCodeVisual(
         title: 'QRCode perigoso',
-        backgroundColor:
-            Colors.red.shade50,
-        borderColor:
-            Colors.red.shade200,
-        iconBackgroundColor:
-            Colors.red.shade100,
-        iconColor:
-            Colors.red.shade700,
-        textColor:
-            Colors.red.shade900,
+        backgroundColor: Colors.red.shade50,
+        borderColor: Colors.red.shade200,
+        iconBackgroundColor: Colors.red.shade100,
+        iconColor: Colors.red.shade700,
+        textColor: Colors.red.shade900,
         icon: Icons.gpp_bad,
       );
     }
 
-    if (normalizedStatus ==
-            'suspicious' ||
-        result.riskScore >= 40) {
+    if (normalizedStatus == 'suspicious' || result.riskScore >= 40) {
       return QRCodeVisual(
-        title:
-            'QRCode requer atenção',
-        backgroundColor:
-            Colors.orange.shade50,
-        borderColor:
-            Colors.orange.shade200,
-        iconBackgroundColor:
-            Colors.orange.shade100,
-        iconColor:
-            Colors.orange.shade700,
-        textColor:
-            Colors.orange.shade900,
-        icon:
-            Icons.warning_amber_rounded,
+        title: 'QRCode requer atenção',
+        backgroundColor: Colors.orange.shade50,
+        borderColor: Colors.orange.shade200,
+        iconBackgroundColor: Colors.orange.shade100,
+        iconColor: Colors.orange.shade700,
+        textColor: Colors.orange.shade900,
+        icon: Icons.warning_amber_rounded,
       );
     }
 
     return QRCodeVisual(
       title: 'QRCode seguro',
-      backgroundColor:
-          Colors.green.shade50,
-      borderColor:
-          Colors.green.shade200,
-      iconBackgroundColor:
-          Colors.green.shade100,
-      iconColor:
-          Colors.green.shade700,
-      textColor:
-          Colors.green.shade900,
+      backgroundColor: Colors.green.shade50,
+      borderColor: Colors.green.shade200,
+      iconBackgroundColor: Colors.green.shade100,
+      iconColor: Colors.green.shade700,
+      textColor: Colors.green.shade900,
       icon: Icons.verified,
     );
   }
@@ -307,11 +330,8 @@ class QRCodeResultCard extends StatelessWidget {
 
 class _InfoTile extends StatelessWidget {
   final IconData icon;
-
   final String label;
-
   final String value;
-
   final Color? valueColor;
 
   const _InfoTile({
@@ -324,14 +344,9 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: Colors.black54,
-        ),
+        Icon(icon, size: 18, color: Colors.black54),
 
         const SizedBox(width: 10),
 
@@ -350,9 +365,7 @@ class _InfoTile extends StatelessWidget {
             value,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color:
-                  valueColor ??
-                  Colors.black87,
+              color: valueColor ?? Colors.black87,
             ),
           ),
         ),
@@ -363,17 +376,11 @@ class _InfoTile extends StatelessWidget {
 
 class QRCodeVisual {
   final String title;
-
   final Color backgroundColor;
-
   final Color borderColor;
-
   final Color iconBackgroundColor;
-
   final Color iconColor;
-
   final Color textColor;
-
   final IconData icon;
 
   QRCodeVisual({

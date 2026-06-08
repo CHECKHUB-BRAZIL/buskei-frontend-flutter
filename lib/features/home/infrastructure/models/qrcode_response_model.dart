@@ -9,14 +9,24 @@ class QRCodeResponseModel {
 
   final String status;
 
-  final String? reason;
+  final List<String> reasons;
 
+  final List<String> positives;
+
+  // PIX
   final String? pixKey;
 
   final String? merchantName;
 
-  final String? amount;
+  final String? city;
 
+  final double? amount;
+
+  final String? txid;
+
+  final bool? isValidCrc;
+
+  // URL
   final String? detectedUrl;
 
   final bool isSuspiciousUrl;
@@ -29,10 +39,14 @@ class QRCodeResponseModel {
     required this.isValid,
     required this.riskScore,
     required this.status,
-    this.reason,
+    required this.reasons,
+    required this.positives,
     this.pixKey,
     this.merchantName,
+    this.city,
     this.amount,
+    this.txid,
+    this.isValidCrc,
     this.detectedUrl,
     required this.isSuspiciousUrl,
     required this.hasUnknownDomain,
@@ -57,8 +71,15 @@ class QRCodeResponseModel {
       status:
           json['status'] ?? 'unknown',
 
-      reason:
-          json['reason'],
+      reasons:
+          List<String>.from(
+            json['reasons'] ?? [],
+          ),
+
+      positives:
+          List<String>.from(
+            json['positives'] ?? [],
+          ),
 
       pixKey:
           json['pix_key'],
@@ -66,8 +87,21 @@ class QRCodeResponseModel {
       merchantName:
           json['merchant_name'],
 
+      city:
+          json['city'],
+
       amount:
-          json['amount']?.toString(),
+          json['amount'] != null
+              ? double.tryParse(
+                  json['amount'].toString(),
+                )
+              : null,
+
+      txid:
+          json['txid'],
+
+      isValidCrc:
+          json['is_valid_crc'],
 
       detectedUrl:
           json['detected_url'],
@@ -89,10 +123,14 @@ class QRCodeResponseModel {
       'is_valid': isValid,
       'risk_score': riskScore,
       'status': status,
-      'reason': reason,
+      'reasons': reasons,
+      'positives': positives,
       'pix_key': pixKey,
       'merchant_name': merchantName,
+      'city': city,
       'amount': amount,
+      'txid': txid,
+      'is_valid_crc': isValidCrc,
       'detected_url': detectedUrl,
       'is_suspicious_url':
           isSuspiciousUrl,
